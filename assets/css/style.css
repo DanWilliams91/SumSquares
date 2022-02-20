@@ -2,14 +2,25 @@
 
 body {
   font-family: "Nova Square", cursive;
+  color: red;
+  background-image: url("../images/bg-img-grey.png");
+  border-radius: 3%;
+  background-size: cover;
+  background-position: center;
 }
 
 h1 {
   font-size: 3em;
 }
 
+.centered-text-box {
+  background-color: black;
+  width: fit-content;
+  margin: 0.5em auto;
+}
+
 .square {
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 10%;
   display: inline-block;
 }
@@ -27,11 +38,6 @@ h1 {
   background-color: green;
 }
 
-#page-title {
-  width: 100%;
-  text-align: center
-}
-
 #help-icon {
   position: absolute;
   right: 1vw;
@@ -45,6 +51,8 @@ h1 {
   position: relative;
   text-align: center;
   padding: 0.5em;
+  background-color: black;
+  border-radius: 3%;
 }
 
 #bottom-text-container {
@@ -59,4 +67,10 @@ h1 {
 #how-to {
   font-size: 2em;
   margin: 0;
+}
+
+@media screen and (min-width: 400px) {
+  #help-icon {
+    font-size: 3em;
+  }
 }
