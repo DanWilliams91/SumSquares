@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Nova+Square&display=swap');
+
+body {
+  font-family: "Nova Square", cursive;
+}
+
+h1 {
+  font-size: 3em;
+}
+
 .square {
   border: 1px solid black;
   border-radius: 10%;
@@ -5,8 +15,8 @@
 }
 
 .square-grid-4x4 {  
-  width: calc(25% - 0.25rem - 2px);
-  padding-top: calc(25% - 0.25rem - 2px);
+  width: calc(25% - 0.25em - 4px);
+  padding-top: calc(25% - 0.25em - 4px);
 }
 
 .red-square {
@@ -24,8 +34,8 @@
 
 #help-icon {
   position: absolute;
-  right: 5vw;
-  top: 1em;
+  right: 1vw;
+  top: 1vw;
   margin-top: 0.25rem;
 }
 
@@ -39,4 +49,14 @@
 
 #bottom-text-container {
   text-align: center;
+}
+
+#start {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+#how-to {
+  font-size: 2em;
+  margin: 0;
 }
