@@ -1,0 +1,42 @@
+.square {
+  border: 1px solid black;
+  border-radius: 10%;
+  display: inline-block;
+}
+
+.square-grid-4x4 {  
+  width: calc(25% - 0.25rem - 2px);
+  padding-top: calc(25% - 0.25rem - 2px);
+}
+
+.red-square {
+  background-color: red;
+}
+
+.green-square {
+  background-color: green;
+}
+
+#page-title {
+  width: 100%;
+  text-align: center
+}
+
+#help-icon {
+  position: absolute;
+  right: 5vw;
+  top: 1em;
+  margin-top: 0.25rem;
+}
+
+#squares-container {
+  margin: auto auto;
+  max-width: 70vh;
+  position: relative;
+  text-align: center;
+  padding: 0.5em;
+}
+
+#bottom-text-container {
+  text-align: center;
+}
