@@ -18,5 +18,8 @@
   "homepage": "https://github.com/DanWilliams91/Squares-Game#readme",
   "devDependencies": {
     "jest": "^27.5.1"
+  },
+  "dependencies": {
+    "jquery": "^3.6.0"
   }
 }
