@@ -42,6 +42,11 @@ body {
   padding-top: calc(10% - 0.25em - 4px);
 }
 
+.square-grid-12x12 {  
+  width: calc(8.333% - 0.25em - 4px);
+  padding-top: calc(8.333% - 0.25em - 4px);
+}
+
 .red-square {
   background-color: red;
 }
@@ -71,12 +76,14 @@ body {
   text-align: center;
 }
 
-#start {
+#start,
+#timer {
   font-size: 2.5em;
   margin: 0;
 }
 
-#how-to {
+#how-to,
+#stage-number {
   font-size: 2em;
   margin: 0;
 }
