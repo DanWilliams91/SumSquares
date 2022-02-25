@@ -6,7 +6,7 @@ global.window = window
 global.$ = require("jquery");
 
 const { hostname } = require("os");
-const { game, initialAnimation, startGame, textAreaRevision } = require("../script"); //imports the things from the JS file
+const { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage } = require("../script"); //imports the things from the JS file
 
 beforeAll(() => {
     let fs = require("fs");
@@ -19,19 +19,6 @@ beforeAll(() => {
 describe("JS files linking correctly", () => {
   test("game contains stage key", () => {
     expect("stage" in game).toBe(true);
-  });
-});
-
-describe("Animation loading correctly on page load", () => {
-  test("some squares are being highlighted in red", () => {
-    document.addEventListener("DOMContentLoaded", function () {
-      let allSquares = document.getElementsByClassName("square");
-      let squaresClassList = [];
-      Array.from(allSquares).forEach(function (key) {
-        squaresClassList.push(key.classList);
-      })
-      expect(JSON.stringify(squaresClassList)).toContain("red-square");
-    });
   });
 });
 
@@ -56,6 +43,7 @@ describe("Clicking 'Play Game' stops the initial animation and alters the text b
     });
   });
 
+  
 
 
   

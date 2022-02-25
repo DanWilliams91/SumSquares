@@ -44,9 +44,10 @@ function initialAnimation() {
       array[j] = temp;
     }
     return array;
-  }  
+  }
 
   let animation = setInterval(function () { //the setInterval function is run at specified intervals of 800ms
+    console.log("initial animation activated")
     let squaresArray = $(".square");
     shuffleArray(squaresArray);
     $(squaresArray[0]).addClass("red-square");
@@ -56,17 +57,19 @@ function initialAnimation() {
       $(squaresArray[0]).removeClass("red-square");
       $(squaresArray[7]).removeClass("red-square");
       $(squaresArray[15]).removeClass("red-square");
-    }, 800);
-    $("#start").on("click", function() {
+    }, 800)
+    if (game.stage !== 0) {
       console.log("red squares cleared");
-      $(squaresArray[0]).removeClass("red-square");
-      $(squaresArray[7]).removeClass("red-square");
-      $(squaresArray[15]).removeClass("red-square");
+      $(squaresArray).removeClass("red-square");
       clearInterval(animation);
-    });
-  }, 800);
-};
+    }
+  }, 400)
+}
 
+/**
+ * Runs when the player clicks "Play Game", which begins Stage 1 of the game and calls another function
+ * to revise the text below the grid
+ */
 function startGame() {
   console.log("startGame() running - player clicked 'Play Game'");
   game.stage = 1;
@@ -74,62 +77,101 @@ function startGame() {
   gridDisplayUpdate();
 }
 
+function nextStage() {
+  game.stage++;
+  gridDisplayUpdate();  
+}
+
 
 /**
  * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
- * to the text viewed when the game is in play.
- * INCOMPLETE
+ * to the either:
+ *  - the text viewed when the game is in play; or
+ *  - the intial values if the player has decided to return to the initial screen.
+ * INCOMPLETE - TIMER VARIABLE TO BE ADDED
  */
 function textAreaRevision() {
-  console.log("textAreaRevision() - text below grid revised");
   if (game.stage == 1) {
     $("#start").attr("id", "timer");
     $("#timer").html(`Time Remaining: 5.00`) // TIMER AMOUNT NEEDS TO BE INSERTED HERE
     $("#how-to").attr("id", "stage-number");
-    $("#stage-number").html(`Stage ${game.stage}`)
+    $("#stage-number").html(`Stage ${game.stage}`)    
+    console.log("textAreaRevision() - text below grid revised");
+  } else {
+    $("#timer").attr("id", "start");
+    $("#start").html(`&nbsp; Play Game &nbsp;`)
+    $("#stage-number").attr("id", "how-to");
+    $("#how-to").html(`&nbsp; How to Play &nbsp;`)
+    console.log("textAreaRevision() - text reset to initial values");
   }
 }
 
 /**
- * Checks the current game stage and adds squares to the grid according to the stage
- * INCOMPLETE - NEED TO CHECK CORRECT AMOUNT ADDED
- * MAY ALSO NEED CHANGING TO INCLUDE AN OPTION FOR A NEW GAME TO START:
- *  GRID WILL NEED TO RETURN TO NORMAL
+ * Resets the screen to the initial layout when the user chooses to exit the game.
+ */
+function returnToInitial() {
+  game.stage = 0;
+  gridArea.empty();
+  for (let i = 0; i < 16; i++) {
+    gridArea.append(singleSquareHTML);
+  };
+  gridArea.children().addClass("square-grid-4x4");
+  initialAnimation();
+  textAreaRevision();
+}
+
+/**
+ * Checks the current game stage and adds the relevant number of squares to the grid
+ * depending on the current game stage.
  */
 function gridDisplayUpdate() {
-  console.log("gridDisplayUpdate() - stage checked and squares added if needed");
-  game.stage = 3; //REMOVE AFTER TESTING
-  switch(game.stage) { //INSERTED BY GERRY - USE THIS INSTEAD OF IF STATEMENTS WHEN THERE'S MORE THAN 3
+  switch(game.stage) {   
+    case 1:
+      gridArea.empty();
+      for (let i = 0; i < 16; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-4x4");
+      break;
     case 3:
-      console.log('Switch Statement');
+      gridArea.empty();
+      for (let i = 0; i < 36; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-6x6");
+      break;
+    case 5:
+      gridArea.empty();
+      for (let i = 0; i < 64; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-8x8")
+      break;
+    case 7:
+      gridArea.empty();
+      for (let i = 0; i < 100; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-10x10");
+      break;
+    case 9:
+      gridArea.empty();
+      for (let i = 0; i < 144; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-12x12");
+      break;
+    case 11:
+      gridArea.empty();
+      for (let i = 0; i < 400; i++) {
+        gridArea.append(singleSquareHTML);
+      };
+      gridArea.children().addClass("square-grid-20x20");
       break;
     default:
-      console.log('default');
-  }
-  
-  if (game.stage > 2 && game.stage <= 4) {
-    for (let i = 0; i < 20; i++) {
-      console.log(i);
-      gridArea.append(singleSquareHTML);
-    };    
-    gridArea.children().removeClass("square-grid-4x4").addClass("square-grid-6x6");
-  } else if (game.stage > 4 && game.stage <= 7) {
-    for (let i = 0; i < 28; i++) {
-      gridArea.append(singleSquareHTML);
-    };    
-    gridArea.children().removeClass("square-grid-6x6").addClass("square-grid-8x8")
-  } else if (game.stage > 7 && game.stage <= 9) {
-    for (let i = 0; i < 36; i++) {
-      gridArea.append(singleSquareHTML);
-    };    
-    gridArea.children().removeClass("square-grid-8x8").addClass("square-grid-10x10");
-  } else if (game.stage > 9) {
-    for (let i = 0; i < 44; i++) {
-      gridArea.append(singleSquareHTML);
-    };
-    gridArea.children().removeClass("square-grid-10x10").addClass("square-grid-12x12");
-  }
-}
+      console.log(`grid not updated for stage ${game.stage}`);
+  };
+};
 
 
 
@@ -145,4 +187,4 @@ $("#how-to").on("click", function() {
 
 
 
-module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate }; //variables/functions to go here to export to test file, separated by commas
+module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage }; //variables/functions to go here to export to test file, separated by commas
