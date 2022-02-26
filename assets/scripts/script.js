@@ -22,7 +22,8 @@ $(document).ready(function(){
 */
 
 let game = {
-  stage: 0
+  stage: 0,
+  timer: 5000
 }
 
 let textArea = $("#bottom-text-container");
@@ -57,7 +58,7 @@ function initialAnimation() {
       $(squaresArray[0]).removeClass("red-square");
       $(squaresArray[7]).removeClass("red-square");
       $(squaresArray[15]).removeClass("red-square");
-    }, 800)
+    }, 400)
     if (game.stage !== 0) {
       console.log("red squares cleared");
       $(squaresArray).removeClass("red-square");
@@ -75,13 +76,38 @@ function startGame() {
   game.stage = 1;
   textAreaRevision();
   gridDisplayUpdate();
+  stageBegin();
 }
 
 function nextStage() {
   game.stage++;
-  gridDisplayUpdate();  
+  gridDisplayUpdate();
+  stageBegin();  
 }
 
+/**
+ * Begins the countdown of the in-play time limit.
+ * Timer code taken from https://stackoverflow.com/a/31106229
+ */
+function timerStart() {}
+
+function stageBegin() {
+  console.log(`Stage ${game.stage} Started`);
+  $(gridArea).append(`
+    <div id="player-start-input">
+      <p>Ready?
+        <br>
+        <button id="go">GO!</button>
+      </p>
+    </div>`);
+    $("#go").on("click", function() {
+      stageInPlay();
+    });
+}
+
+function stageInPlay() {
+  console.log("Player has clicked GO!");
+}
 
 /**
  * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
@@ -93,7 +119,7 @@ function nextStage() {
 function textAreaRevision() {
   if (game.stage == 1) {
     $("#start").attr("id", "timer");
-    $("#timer").html(`Time Remaining: 5.00`) // TIMER AMOUNT NEEDS TO BE INSERTED HERE
+    $("#timer").html(`Time Remaining: ${game.timer}`) // TIMER AMOUNT NEEDS TO BE INSERTED HERE
     $("#how-to").attr("id", "stage-number");
     $("#stage-number").html(`Stage ${game.stage}`)    
     console.log("textAreaRevision() - text below grid revised");

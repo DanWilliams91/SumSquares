@@ -94,19 +94,46 @@ body {
   border-radius: 3%;
 }
 
+#player-start-input {
+  --width: 50%;
+  --height: 50%;
+  width: var(--width);
+  height: var(--height);
+  bottom: calc(50% - (var(--height) / 2));
+  position: absolute;
+  left: calc(50% - (var(--width) / 2));
+  font-size: 1em;
+  background-color: black;
+  border-radius: 10%;
+  border: 1px solid;
+}
+
+#player-start-input p {
+  height: -webkit-fill-available;
+}
+
+#go {
+  font-size: inherit;
+  background-color: lime;
+  border-radius: 20%;
+  color: red;
+  font-family: 'Nova Square', cursive;
+  margin-top: 10%;
+}
+
 #bottom-text-container {
   text-align: center;
 }
 
 #start,
 #timer {
-  font-size: 2.5em;
+  font-size: 1.5em;
   margin: 0;
 }
 
 #how-to,
 #stage-number {
-  font-size: 2em;
+  font-size: 1em;
   margin: 0;
 }
 
@@ -119,4 +146,29 @@ body {
   #help-icon {
     font-size: 3em;
   }
+
+  #player-start-input {
+    font-size: 2em;
+  }
+
+  #start,
+  #timer {
+  font-size: 2.5em;
+  margin: 0;
+  }
+
+  #how-to,
+  #stage-number {
+    font-size: 2em;
+    margin: 0;
+  }
+
+}
+
+@media screen and (min-width: 600px) {
+
+  #player-start-input {
+    font-size: 4em;
+  }
+
 }
