@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Nova+Square&display=swap');
 
+:root {
+  --square-gap-total: (0.25em + 4px);
+} 
+
 body {
   font-family: "Nova Square", cursive;
   color: red;
@@ -23,49 +27,49 @@ body {
 }
 
 .square-grid-initial {  
-  width: calc(25% - 0.25em - 4px);
-  padding-top: calc(25% - 0.25em - 4px);
+  width: calc(calc(100% / 4) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 4) - var(--square-gap-total));
 }
 
 .square-grid-4x4 {  
-  width: calc(25% - 0.25em - 4px);
-  padding-top: calc(25% - 0.25em - 4px);  
+  width: calc(calc(100% / 4) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 4) - var(--square-gap-total));
   margin: 0 2px;
 }
 
 .square-grid-6x6 {  
-  width: calc(16.667% - 0.25em - 4px);
-  padding-top: calc(16.667% - 0.25em - 4px);
+  width: calc(calc(100% / 6) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 6) - var(--square-gap-total));
   margin: 0 2px;
 }
 
 .square-grid-8x8 {  
-  width: calc(12.5% - 0.25em - 4px);
-  padding-top: calc(12.5% - 0.25em - 4px);
+  width: calc(calc(100% / 8) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 8) - var(--square-gap-total));
   margin: 0 2px;
 }
 
 .square-grid-10x10 {  
-  width: calc(10% - 0.25em - 4px);
-  padding-top: calc(10% - 0.25em - 4px);
+  width: calc(calc(100% / 10) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 10) - var(--square-gap-total));
   margin: 0 2px;
 }
 
 .square-grid-12x12 {  
-  width: calc(8.333% - 0.25em - 4px);
-  padding-top: calc(8.333% - 0.25em - 4px);
+  width: calc(calc(100% / 12) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 12) - var(--square-gap-total));
   margin: 0 3px;
 }
 
 .square-grid-14x14 {  
-  width: calc(7.1429% - 0.25em - 4px);
-  padding-top: calc(7.1429% - 0.25em - 4px);
+  width: calc(calc(100% / 14) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 14) - var(--square-gap-total));
   margin: 0 3px;
 }
 
 .square-grid-20x20 {  
-  width: calc(5% - 0.25em - 4px);
-  padding-top: calc(5% - 0.25em - 4px);
+  width: calc(calc(100% / 20) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 20) - var(--square-gap-total));
   margin: 0 3px;
 }
 
@@ -73,8 +77,19 @@ body {
   background-color: red;
 }
 
+.gray-square {
+  background-color: white;
+}
+
 .green-square {
   background-color: green;
+}
+
+.center-nums {
+  font-size: 3em;
+  position: absolute;
+  bottom: 15%;
+  right: 30%;
 }
 
 #help-icon {
@@ -97,15 +112,16 @@ body {
 #player-start-input {
   --width: 50%;
   --height: 50%;
+  --border-width: 5px;
   width: var(--width);
   height: var(--height);
-  bottom: calc(50% - (var(--height) / 2));
+  bottom: calc(50% - (var(--height) / 2) - var(--border-width));
   position: absolute;
-  left: calc(50% - (var(--width) / 2));
+  left: calc(50% - (var(--width) / 2) - var(--border-width));
   font-size: 1em;
   background-color: black;
   border-radius: 10%;
-  border: 1px solid;
+  border: 5px solid;
 }
 
 #player-start-input p {

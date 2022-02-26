@@ -23,12 +23,16 @@ $(document).ready(function(){
 
 let game = {
   stage: 0,
-  timer: 5000
+  timer: 5000,
+  clock: 3
 }
 
 let textArea = $("#bottom-text-container");
 let gridArea = $("#squares-container");
 let singleSquareHTML = `<div class="square"></div>`;
+
+$("#timer").hide();
+$("#stage-number").hide();
 
 /**
  * Iterates through the existing squares on the page and highlights random
@@ -47,7 +51,7 @@ function initialAnimation() {
     return array;
   }
 
-  let animation = setInterval(function () { //the setInterval function is run at specified intervals of 800ms
+  let animation = setInterval(function () {
     console.log("initial animation activated")
     let squaresArray = $(".square");
     shuffleArray(squaresArray);
@@ -93,6 +97,7 @@ function timerStart() {}
 
 function stageBegin() {
   console.log(`Stage ${game.stage} Started`);
+  gridArea.children().addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
       <p>Ready?
@@ -101,12 +106,37 @@ function stageBegin() {
       </p>
     </div>`);
     $("#go").on("click", function() {
-      stageInPlay();
+      console.log("'GO' CLICKED")
+      countdown();
     });
 }
 
+/**
+ * Counts down in 1s increments and inserts the numbers 3, 2 and 1 into the game area
+ * prior to the stage being in-play.
+ */
+function countdown() {
+  console.log("countdown() called")
+  $("#player-start-input > p").empty();
+  $("#player-start-input > p").html(`<span class="center-nums">${game.clock}</span>`);
+  let count = setInterval (function () {  
+    game.clock -= 1;    
+    $("#player-start-input > p").empty();
+    $("#player-start-input > p").html(`<span class="center-nums">${game.clock}</span>`);
+    console.log("time logged");
+    if (game.clock < 1) {
+      clearInterval(count);      
+      stageInPlay();
+    }
+  }, 1000)
+}
+
 function stageInPlay() {
-  console.log("Player has clicked GO!");
+  console.log("Game in play");
+  $("#player-start-input").remove();
+  gridArea.children().removeClass("gray-square");
+  // stageAnswer();
+  timerStart();
 }
 
 /**
@@ -118,25 +148,29 @@ function stageInPlay() {
  */
 function textAreaRevision() {
   if (game.stage == 1) {
-    $("#start").attr("id", "timer");
-    $("#timer").html(`Time Remaining: ${game.timer}`) // TIMER AMOUNT NEEDS TO BE INSERTED HERE
-    $("#how-to").attr("id", "stage-number");
-    $("#stage-number").html(`Stage ${game.stage}`)    
+    $("#start").hide();
+    $("#how-to").hide();
+    $("#timer").show();
+    $("#timer").html(`Time Remaining: ${game.timer}`); // TIMER AMOUNT NEEDS TO BE INSERTED HERE
+    $("#stage-number").show();
+    $("#stage-number").html(`Stage ${game.stage}`);   
     console.log("textAreaRevision() - text below grid revised");
   } else {
-    $("#timer").attr("id", "start");
-    $("#start").html(`&nbsp; Play Game &nbsp;`)
-    $("#stage-number").attr("id", "how-to");
-    $("#how-to").html(`&nbsp; How to Play &nbsp;`)
+    $("#start").show();
+    $("#how-to").show();
+    $("#timer").hide();
+    $("#stage-number").hide();
     console.log("textAreaRevision() - text reset to initial values");
   }
 }
 
 /**
  * Resets the screen to the initial layout when the user chooses to exit the game.
+ * NOT YET TESTED
  */
 function returnToInitial() {
   game.stage = 0;
+  game.clock = 3;
   gridArea.empty();
   for (let i = 0; i < 16; i++) {
     gridArea.append(singleSquareHTML);
