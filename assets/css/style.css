@@ -85,11 +85,11 @@ body {
   background-color: green;
 }
 
-.center-nums {
+#center-nums {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 3em;
-  position: absolute;
-  bottom: 15%;
-  right: 30%;
 }
 
 #help-icon {
@@ -112,7 +112,7 @@ body {
 #player-start-input {
   --width: 50%;
   --height: 50%;
-  --border-width: 5px;
+  --border-width: 10px;
   width: var(--width);
   height: var(--height);
   bottom: calc(50% - (var(--height) / 2) - var(--border-width));
@@ -121,7 +121,10 @@ body {
   font-size: 1em;
   background-color: black;
   border-radius: 10%;
-  border: 5px solid;
+  border: var(--border-width) solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #player-start-input p {
@@ -184,6 +187,10 @@ body {
 @media screen and (min-width: 600px) {
 
   #player-start-input {
+    font-size: 3em;
+  }
+
+  #center-nums {
     font-size: 4em;
   }
 

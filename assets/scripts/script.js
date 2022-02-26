@@ -24,7 +24,8 @@ $(document).ready(function(){
 let game = {
   stage: 0,
   timer: 5000,
-  clock: 3
+  clock: 3,
+  redSquares: 0
 }
 
 let textArea = $("#bottom-text-container");
@@ -100,7 +101,7 @@ function stageBegin() {
   gridArea.children().addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
-      <p>Ready?
+      <p>Count the RED squares
         <br>
         <button id="go">GO!</button>
       </p>
@@ -118,11 +119,11 @@ function stageBegin() {
 function countdown() {
   console.log("countdown() called")
   $("#player-start-input > p").empty();
-  $("#player-start-input > p").html(`<span class="center-nums">${game.clock}</span>`);
+  $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
   let count = setInterval (function () {  
     game.clock -= 1;    
-    $("#player-start-input > p").empty();
-    $("#player-start-input > p").html(`<span class="center-nums">${game.clock}</span>`);
+    $("#center-nums").empty();
+    $("#center-nums").html(`${game.clock}`);
     console.log("time logged");
     if (game.clock < 1) {
       clearInterval(count);      
@@ -132,18 +133,71 @@ function countdown() {
 }
 
 function stageInPlay() {
+  game.redSquares = 0;
   console.log("Game in play");
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
-  // stageAnswer();
-  timerStart();
+  setSquares();// code to highlight certain number of squares - new f probably best
+}
+
+function setSquares() {
+  if (game.stage < 13) {
+    switch (game.stage) {
+      case 1:
+      case 2:
+        //set number of red squares
+      case 3:
+      case 4:
+        //set number of red squares
+      case 5:
+      case 6:
+        //set number of red squares
+      case 7:
+      case 8:
+        //set number of red squares
+      case 9:
+      case 10:
+        //set number of red and green squares
+      case 11:
+      case 12:
+        //set number of red and green squares
+    }
+    timerStart(); // to start the timer.
+  } else {
+    //Code when game is completed, i.e. player completed stage 12
+  }
+}
+
+/**
+ * Decreases the timer value in the game for display below the grid.
+ */
+function timerStart() {
+  //Decrease game.timer in real-time
+  //when game.timer is 0, call stageEnd()
+}
+
+/**
+ * Displays an area for the player to input their answer for each stage.
+ */
+function stageEnd() {
+  //insert input for player
+}
+
+/**
+ * Checks the player's inputted answer against the correct answer stored in
+ * the redSquares key of game.
+ */
+function checkAnswer() {
+  //compare answer to game.redSquares
+  //if correct, display "you got it correct" and insert button to call stageBegin() to proceed
+    // else display "you got it wrong" and insert button to call startGame() to restart
 }
 
 /**
  * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
  * to the either:
  *  - the text viewed when the game is in play; or
- *  - the intial values if the player has decided to return to the initial screen.
+ *  - the intial values if the player has decided to return to the landing screen.
  * INCOMPLETE - TIMER VARIABLE TO BE ADDED
  */
 function textAreaRevision() {
@@ -151,9 +205,9 @@ function textAreaRevision() {
     $("#start").hide();
     $("#how-to").hide();
     $("#timer").show();
-    $("#timer").html(`Time Remaining: ${game.timer}`); // TIMER AMOUNT NEEDS TO BE INSERTED HERE
+    $("#timer").html(`&nbsp;Time Remaining: ${game.timer}&nbsp;`); // TIMER AMOUNT NEEDS TO BE INSERTED HERE
     $("#stage-number").show();
-    $("#stage-number").html(`Stage ${game.stage}`);   
+    $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`);   
     console.log("textAreaRevision() - text below grid revised");
   } else {
     $("#start").show();
