@@ -34,6 +34,8 @@ var squaresArray = $(".square");
 let singleSquareHTML = `<div class="square"></div>`;
 
 $("#timer").hide();
+$("#exit").hide();
+$("#continue").hide();
 $("#stage-number").hide();
 
 //Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
@@ -86,9 +88,10 @@ function nextStage() {
   game.stage++;
   game.clock = 3;  
   $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`); 
+  $("#player-start-input").remove();
   if (game.stage < 13) {
     gridDisplayUpdate();
-    stageBegin();  
+    stageBegin();
   } else {
     console.log("Game completed")
     //Code when game is completed, i.e. player completed stage 12
@@ -98,6 +101,8 @@ function nextStage() {
 }
 
 function stageBegin() {
+  $("#continue").hide();
+  $("#timer").show();
   console.log(`Stage ${game.stage} Started`);
   $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
   gridArea.children().addClass("gray-square");
@@ -108,10 +113,10 @@ function stageBegin() {
         <button id="go">GO!</button>
       </p>
     </div>`);
-    $("#go").on("click", function() {
-      console.log("'GO' CLICKED")
-      countdown();
-    });
+  $("#go").on("click", function () {
+    console.log("'GO' CLICKED")
+    countdown();
+  });
 }
 
 /**
@@ -143,19 +148,42 @@ function stageInPlay() {
 }
 
 function setStageSquares() {
-  var stageRedSquares = [3, 4, 5];
-  //Need to think of a way to have an array between the min and max allowed per stage
-  //So I can generate a random number between min and max for the stage answer
+  var stageRedSquares = [];
   if (game.stage < 13) {
     switch (game.stage) {
       case 1:
       case 2:
+        stageRedSquares = [3, 4, 5];
         shuffleArray(stageRedSquares);
         game.redSquares = stageRedSquares[0];
-        console.log("Stage squares calculated");
-        //set number of red squares
       case 3:
       case 4:
+        // for (let i = stageRedSquares.pop(); i < Math.round(((squaresArray.length - 1) / 3)); i++) { //the 20 here is too many -how about a function to calc the proportion of
+        //                                                   //reds to totals (i.e. stage 1 max 5 of 16 squares)
+        //   stageRedSquares.push(i += 1); //adds an item to the end of the array
+        // }        
+        // stageRedSquares.splice(0, 1); //removes first value of array (need to change this to be, say, )
+
+        /* I need to:
+          - set the number of options of red squares that there should be, i.e stageRedSquares = [3, 4, 5] is 3 options
+            - somehow set this as a calculation based on either:
+              - the stage number;
+              - the number of squares on the grid; or
+              - a combination of both.
+
+            - apply this length to the stageRedSquares array by either: 
+              - using splice() to remove numbers from the beginning of the array; or
+              - only adding the relevant amount of numbers to the empty array.
+
+          - set the options of the number of red squares that there should be, i.e stageRedSquares = [3, 4, 5] will have either 3, 4 or 5 squares
+        */
+
+
+        //no of squares is squaresArray.length
+
+
+        shuffleArray(stageRedSquares);
+        game.redSquares = stageRedSquares[0];
         //set number of red squares
       case 5:
       case 6:
@@ -230,6 +258,16 @@ function stageEnd() {
         <button id="player-submit" data-type="submit">Check</button>
       </p>
     </div>`);
+
+  // $("#player-start-input").html(`
+  //   <div id="player-start-input">
+  //     <p>How many RED squares did you count?
+  //       <input id="player-answer" type="number">
+  //       <button id="player-submit" data-type="submit">Check</button>
+  //     </p>
+  //   </div>
+  //   `);
+
   $("#player-answer").focus();
   $("#player-answer").on("keydown", function(event) {
     if (event.key === "Enter") {
@@ -255,16 +293,19 @@ function checkAnswer() {
 function playerCorrect() {
   console.log("Player answered correctly!");
   squaresArray.removeClass("gray-square red-square").addClass("green-square");
+  $("#player-start-input").empty().html("You got it right!")
+  $("#timer").hide();
+  $("#continue").show();
 }
 
 function playerIncorrect() {
   console.log("Player answered incorrectly!");
   squaresArray.removeClass("gray-square").addClass("red-square");
+  //display "you got it wrong" and insert button to call startGame() to restart
+  $("#player-start-input").empty().html("You got it wrong!")
+  $("#timer").hide();
+  $("#exit").show();
 }
-
-  //compare answer to game.redSquares
-  //if correct, display "you got it correct" and insert button to call stageBegin() to proceed
-    // else display "you got it wrong" and insert button to call startGame() to restart
 
 
 /**
@@ -278,6 +319,7 @@ function textAreaRevision() {
   if (game.stage == 1) {
     $("#start").hide();
     $("#how-to").hide();
+    $("#exit").hide();
     $("#timer").show();
     $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`); // TIMER AMOUNT NEEDS TO BE INSERTED HERE
     $("#stage-number").show();
@@ -287,6 +329,7 @@ function textAreaRevision() {
     $("#start").show();
     $("#how-to").show();
     $("#timer").hide();
+    $("#exit").hide();
     $("#stage-number").hide();
     console.log("textAreaRevision() - text reset to initial values");
   }
@@ -297,8 +340,12 @@ function textAreaRevision() {
  * NOT YET TESTED
  */
 function returnToInitial() {
-  game.stage = 0;
-  game.clock = 3;
+  game = {
+    stage: 0,
+    timer: {sec: 5, mSec: "000"},
+    clock: 3,
+    redSquares: 0
+  }
   gridArea.empty();
   for (let i = 0; i < 16; i++) {
     gridArea.append(singleSquareHTML);
@@ -369,8 +416,21 @@ $("#start").on("click", function() {
   startGame();
 });
 
+$("#exit").on("click", function() {
+  returnToInitial();
+});
+
+$("#continue").on("click", function() {
+  nextStage();
+  $(".square").removeClass("green-square");
+});
+
 $("#how-to").on("click", function() {
-  
+  //Game instructions/help
+});
+
+$("#help-icon").on("click", function() {
+  //Game instructions/help
 });
 
 
