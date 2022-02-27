@@ -26,7 +26,7 @@ let game = {
   timer: {sec: 5, mSec: "000"},
   clock: 3,
   redSquares: 0
-}
+};
 
 let textArea = $("#bottom-text-container");
 let gridArea = $("#squares-container");
@@ -45,9 +45,9 @@ function shuffleArray(array) {
     var temp = array[i];
     array[i] = array[j];
     array[j] = temp;
-  }
+  };
   return array;
-}
+};
 
 /**
  * Iterates through the existing squares on the page and highlights random
@@ -55,7 +55,7 @@ function shuffleArray(array) {
  */
 function initialAnimation() {
   let animation = setInterval(function () {
-    console.log("initial animation activated")
+    console.log("initial animation activated");
     shuffleArray(squaresArray);
     for(let i = 0; i < 4; i++) {
       $(squaresArray[i]).addClass("red-square");
@@ -68,9 +68,9 @@ function initialAnimation() {
     setTimeout(() =>{
       $(squaresArray).removeClass("red-square");
       console.log("squares deleted");
-    }, 400)
-  }, 800)
-}
+    }, 400);
+  }, 800);
+};
 
 /**
  * Runs when the player clicks "Play Game", which begins Stage 1 of the game and calls another function
@@ -93,12 +93,12 @@ function nextStage() {
     gridDisplayUpdate();
     stageBegin();
   } else {
-    console.log("Game completed")
+    console.log("Game completed");
     //Code when game is completed, i.e. player completed stage 12
       //Final animation - flashing squares to congratulate
       //Provide options to return to start page or start a new game
-  }
-}
+  };
+};
 
 function stageBegin() {
   $("#continue").hide();
@@ -114,17 +114,17 @@ function stageBegin() {
       </p>
     </div>`);
   $("#go").on("click", function () {
-    console.log("'GO' CLICKED")
+    console.log("'GO' CLICKED");
     countdown();
   });
-}
+};
 
 /**
  * Counts down in 1s increments and inserts the numbers 3, 2 and 1 into the game area
  * prior to the stage being in-play.
  */
 function countdown() {
-  console.log("countdown() called")
+  console.log("countdown() called");
   $("#player-start-input > p").empty();
   $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
   let count = setInterval (function () {  
@@ -135,9 +135,9 @@ function countdown() {
     if (game.clock < 1) {
       clearInterval(count);      
       stageInPlay();
-    }
-  }, 1000)
-}
+    };
+  }, 1000);
+};
 
 function stageInPlay() {
   game.redSquares = 0;
@@ -145,7 +145,7 @@ function stageInPlay() {
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
   setStageSquares();
-}
+};
 
 function setStageSquares() {
   var stageRedSquares = [];
@@ -202,8 +202,8 @@ function setStageSquares() {
     stageTimer(); // to start the timer.
   } else {
     //Code when game is completed, i.e. player completed stage 12
-  }
-}
+  };
+};
 
 /**
  * Applies the number of red squares to the grid relevant to the
@@ -214,37 +214,33 @@ function stageApplyRedSquares() {
   shuffleArray(squaresArray);
   for (let i = 0; i < game.redSquares; i++) {
     $(squaresArray[i]).addClass("red-square");
-  }
-}
+  };
+};
 
 /**
  * Begins the countdown of the in-play time limit.
  */
 function stageTimer() {
-
   let decrease = setInterval (function () {
-
     if (parseInt(game.timer.mSec) > 0) {
       game.timer.mSec -= 5;
-      $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${parseInt(game.timer.mSec).toString().padStart(3, "0")}&nbsp;`);
-      
+      $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${parseInt(game.timer.mSec).toString().padStart(3, "0")}&nbsp;`);      
     } else {
       game.timer.mSec = 995;
       game.timer.sec -= 1;
       $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${parseInt(game.timer.mSec).toString().padStart(3, "0")}&nbsp;`);
-    }
-
+    };
     if (game.timer.sec == 0 && parseInt(game.timer.mSec) == 0) {
       clearInterval(decrease);
       $("#timer").html(`Time's Up!`);
       stageEnd();
-    }
-
-  }, 5)
-}
+    };
+  }, 5);
+};
 
 /**
  * Displays an area for the player to input their answer for each stage.
+ * BUTTON CURRENTLY NOT FUNCTIONAL
  */
 function stageEnd() {
   console.log("stage ended");
@@ -269,12 +265,12 @@ function stageEnd() {
   //   `);
 
   $("#player-answer").focus();
-  $("#player-answer").on("keydown", function(event) {
+  $("#player-answer").on("keydown", function (event) {
     if (event.key === "Enter") {
-        checkAnswer();
-    }
-});
-}
+      checkAnswer();
+    };
+  });
+};
 
 /**
  * Checks the player's inputted answer against the correct answer stored in
@@ -313,7 +309,6 @@ function playerIncorrect() {
  * to the either:
  *  - the text viewed when the game is in play; or
  *  - the intial values if the player has decided to return to the landing screen.
- * INCOMPLETE - TIMER VARIABLE TO BE ADDED
  */
 function textAreaRevision() {
   if (game.stage == 1) {
@@ -321,7 +316,7 @@ function textAreaRevision() {
     $("#how-to").hide();
     $("#exit").hide();
     $("#timer").show();
-    $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`); // TIMER AMOUNT NEEDS TO BE INSERTED HERE
+    $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
     $("#stage-number").show();
     $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`);   
     console.log("textAreaRevision() - text below grid revised");
