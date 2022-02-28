@@ -37,9 +37,21 @@ body {
   margin: 0 2px;
 }
 
+.square-grid-5x5 {  
+  width: calc(calc(100% / 5) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 5) - var(--square-gap-total));
+  margin: 0 2px;
+}
+
 .square-grid-6x6 {  
   width: calc(calc(100% / 6) - var(--square-gap-total));
   padding-top: calc(calc(100% / 6) - var(--square-gap-total));
+  margin: 0 2px;
+}
+
+.square-grid-7x7 {  
+  width: calc(calc(100% / 7) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 7) - var(--square-gap-total));
   margin: 0 2px;
 }
 
@@ -49,9 +61,21 @@ body {
   margin: 0 2px;
 }
 
+.square-grid-9x9 {  
+  width: calc(calc(100% / 9) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 9) - var(--square-gap-total));
+  margin: 0 2px;
+}
+
 .square-grid-10x10 {  
   width: calc(calc(100% / 10) - var(--square-gap-total));
   padding-top: calc(calc(100% / 10) - var(--square-gap-total));
+  margin: 0 2px;
+}
+
+.square-grid-11x11 {  
+  width: calc(calc(100% / 11) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 11) - var(--square-gap-total));
   margin: 0 2px;
 }
 
@@ -61,9 +85,27 @@ body {
   margin: 0 3px;
 }
 
+.square-grid-13x13 {  
+  width: calc(calc(100% / 13) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 13) - var(--square-gap-total));
+  margin: 0 3px;
+}
+
 .square-grid-14x14 {  
   width: calc(calc(100% / 14) - var(--square-gap-total));
   padding-top: calc(calc(100% / 14) - var(--square-gap-total));
+  margin: 0 3px;
+}
+
+.square-grid-16x16 {  
+  width: calc(calc(100% / 16) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 16) - var(--square-gap-total));
+  margin: 0 3px;
+}
+
+.square-grid-18x18 {  
+  width: calc(calc(100% / 18) - var(--square-gap-total));
+  padding-top: calc(calc(100% / 18) - var(--square-gap-total));
   margin: 0 3px;
 }
 

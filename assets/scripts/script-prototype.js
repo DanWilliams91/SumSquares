@@ -153,7 +153,7 @@ function stageInPlay() {
 function stageSetup() {
   if (game.stage <= 14) {
     setRedSquares();
-    if (game.stage >= 10) {
+    if (game.stage == 10 || game.stage == 12 || game.stage == 14) {
       setGreenSquares();
     };
     stageApplyColoredSquares();
@@ -166,8 +166,8 @@ function stageSetup() {
       squaresArray = $(".square");
       let stageDifficulty = game.stage;
       var stageRedSquares = [];
-      let minRedSquares = Math.min(Math.max(Math.round(squaresArray.length / 4), Math.round(stageDifficulty * 1.5)), 20); //sets the minimum permitted red squares for the stage
-      let maxRedSquares = Math.min(Math.max(Math.round(squaresArray.length / 4), Math.round(stageDifficulty * 2.5)), 30); //sets the maximum permitted red squares for the stage
+      let minRedSquares = Math.min(Math.max(squaresArray.length / 4, Math.round(stageDifficulty * 1.5)), 20); //sets the minimum permitted red squares for the stage
+      let maxRedSquares = Math.min(Math.max(squaresArray.length / 4, Math.round(stageDifficulty * 2.5)), 30); //sets the maximum permitted red squares for the stage
       for (let i = minRedSquares; i <= maxRedSquares; i++) {
         stageRedSquares.push(i);
       };
@@ -342,104 +342,55 @@ function gridDisplayUpdate() {
   switch(game.stage) {   
     case 1:
       gridArea.empty();
-      for (let i = 0; i < (4 * 4); i++) {
+      for (let i = 0; i < 16; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-4x4");
-      break;  
-    case 2:
-      gridArea.empty();
-      for (let i = 0; i < (5 * 5); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-5x5");
       break;
     case 3:
       gridArea.empty();
-      for (let i = 0; i < (6 * 6); i++) {
+      for (let i = 0; i < 36; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-6x6");
-      break;  
-    case 4:
-      gridArea.empty();
-      for (let i = 0; i < (7 * 7); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-7x7");
       break;
     case 5:
       gridArea.empty();
-      for (let i = 0; i < (8 * 8); i++) {
+      for (let i = 0; i < 64; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-8x8")
-      break;  
-    case 6:
-      gridArea.empty();
-      for (let i = 0; i < (9 * 9); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-9x9");
       break;
     case 7:
       gridArea.empty();
-      for (let i = 0; i < (10 * 10); i++) {
+      for (let i = 0; i < 100; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-10x10");
-      break;  
-    case 10:
-      gridArea.empty();
-      for (let i = 0; i < (11 * 11); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-11x11");
       break;
     case 9:
       gridArea.empty();
-      for (let i = 0; i < (12 * 12); i++) {
+      for (let i = 0; i < 144; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-12x12");
       break;
-    case 10:
-      gridArea.empty();
-      for (let i = 0; i < (13 * 13); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-13x13");
-      break;
     case 11:
       gridArea.empty();
-      for (let i = 0; i < (14 * 14); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-14x14");
-      break;
-    case 12:
-      gridArea.empty();
-      for (let i = 0; i < (16 * 16); i++) {
+      for (let i = 0; i < 256; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-16x16");
       break;
     case 13:
       gridArea.empty();
-      for (let i = 0; i < (18 * 18); i++) {
-        gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-18x18");
-      break;
-    case 14:
-      gridArea.empty();
-      for (let i = 0; i < (20 * 20); i++) {
+      for (let i = 0; i < 400; i++) {
         gridArea.append(singleSquareHTML);
       };
       gridArea.children().addClass("square-grid-20x20");
       break;
     default:
-      gameCompleted();
+      console.log(`grid not updated for stage ${game.stage}`);
   };
 };
 
