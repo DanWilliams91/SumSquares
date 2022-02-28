@@ -25,7 +25,8 @@ let game = {
   stage: 0,
   timer: {sec: 5, mSec: "000"},
   clock: 3,
-  redSquares: 0
+  redSquares: 0,
+  greenSquares: 0
 };
 
 let textArea = $("#bottom-text-container");
@@ -142,6 +143,7 @@ function countdown() {
 
 function stageInPlay() {
   game.redSquares = 0;
+  game.greenSquares = 0;
   console.log("Game in play");
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
@@ -159,19 +161,39 @@ function setStageSquares() {
     }
     shuffleArray(stageRedSquares);
     game.redSquares = stageRedSquares[0];
-    stageApplyRedSquares();
-    stageTimer();
+    if (game.stage === (10 || 12)) {
+      var stageGreenSquares = [];
+      let minGreenSquares = minRedSquares / 2;
+      let maxGreenSquares = maxRedSquares / 2;
+      for (let i = minGreenSquares; i <= maxGreenSquares; i++) {
+        stageGreenSquares.push(i);
+      }
+      shuffleArray(stageGreenSquares);
+      game.greenSquares = stageGreenSquares[0];
+    };
   } else {
-    //Code when game is completed, i.e. player completed stage 12
-  };
+    gameCompleted();
+  };  
+  stageApplyColoredSquares();
+  stageTimer();
 };
 
 /**
- * Applies the number of red squares to the grid relevant to the
+ * Runs when the player has successfully passed the final stage.
+ * Applies DOM changes to signify that the game has been completed.
+ */
+function gameCompleted() {};
+
+/**
+ * Applies the number of red squares to the grid according to the
  * game.redSquares value.
  */
-function stageApplyRedSquares() {  
+function stageApplyColoredSquares() {  
   squaresArray = $(".square");
+  shuffleArray(squaresArray);
+  for (let i = 0; i < game.greenSquares; i++) {
+    $(squaresArray[i]).addClass("green-square");
+  };  
   shuffleArray(squaresArray);
   for (let i = 0; i < game.redSquares; i++) {
     $(squaresArray[i]).addClass("red-square");
@@ -201,30 +223,22 @@ function stageTimer() {
 
 /**
  * Displays an area for the player to input their answer for each stage.
- * BUTTON CURRENTLY NOT FUNCTIONAL
+ * NEED TO ENSURE INPUT REQUIRED
  */
 function stageEnd() {
   console.log("stage ended");
   game.timer = {sec: 5, mSec: "000"};
-  $(".square").removeClass("red-square").addClass("gray-square");
-  
+  $(".square").removeClass("red-square green-square").addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
       <p>How many RED squares did you count?
         <input id="player-answer" type="number">
-        <button id="player-submit" data-type="submit">Check</button>
+        <button id="player-submit" data-type="submit" required>Check</button>
       </p>
     </div>`);
-
-  // $("#player-start-input").html(`
-  //   <div id="player-start-input">
-  //     <p>How many RED squares did you count?
-  //       <input id="player-answer" type="number">
-  //       <button id="player-submit" data-type="submit">Check</button>
-  //     </p>
-  //   </div>
-  //   `);
-
+  $("#player-submit").on("click", function (event) {
+    checkAnswer();
+  });
   $("#player-answer").focus();
   $("#player-answer").on("keydown", function (event) {
     if (event.key === "Enter") {
