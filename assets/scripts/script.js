@@ -30,7 +30,7 @@ let game = {
 
 let textArea = $("#bottom-text-container");
 let gridArea = $("#squares-container");
-var squaresArray = $(".square");
+// let squaresArray = $(".square");
 let singleSquareHTML = `<div class="square"></div>`;
 
 $("#timer").hide();
@@ -56,6 +56,7 @@ function shuffleArray(array) {
 function initialAnimation() {
   let animation = setInterval(function () {
     console.log("initial animation activated");
+    let squaresArray = $(".square");
     shuffleArray(squaresArray);
     for(let i = 0; i < 4; i++) {
       $(squaresArray[i]).addClass("red-square");
@@ -148,58 +149,18 @@ function stageInPlay() {
 };
 
 function setStageSquares() {
-  var stageRedSquares = [];
   if (game.stage < 13) {
-    switch (game.stage) {
-      case 1:
-      case 2:
-        stageRedSquares = [3, 4, 5];
-        shuffleArray(stageRedSquares);
-        game.redSquares = stageRedSquares[0];
-      case 3:
-      case 4:
-        // for (let i = stageRedSquares.pop(); i < Math.round(((squaresArray.length - 1) / 3)); i++) { //the 20 here is too many -how about a function to calc the proportion of
-        //                                                   //reds to totals (i.e. stage 1 max 5 of 16 squares)
-        //   stageRedSquares.push(i += 1); //adds an item to the end of the array
-        // }        
-        // stageRedSquares.splice(0, 1); //removes first value of array (need to change this to be, say, )
-
-        /* I need to:
-          - set the number of options of red squares that there should be, i.e stageRedSquares = [3, 4, 5] is 3 options
-            - somehow set this as a calculation based on either:
-              - the stage number;
-              - the number of squares on the grid; or
-              - a combination of both.
-
-            - apply this length to the stageRedSquares array by either: 
-              - using splice() to remove numbers from the beginning of the array; or
-              - only adding the relevant amount of numbers to the empty array.
-
-          - set the options of the number of red squares that there should be, i.e stageRedSquares = [3, 4, 5] will have either 3, 4 or 5 squares
-        */
-
-
-        //no of squares is squaresArray.length
-
-
-        shuffleArray(stageRedSquares);
-        game.redSquares = stageRedSquares[0];
-        //set number of red squares
-      case 5:
-      case 6:
-        //set number of red squares
-      case 7:
-      case 8:
-        //set number of red squares
-      case 9:
-      case 10:
-        //set number of red and green squares
-      case 11:
-      case 12:
-        //set number of red and green squares
+    squaresArray = $(".square");
+    var stageRedSquares = [];
+    let minRedSquares = Math.min(squaresArray.length / 4, 20); //sets the minimum permitted red squares for the stage
+    let maxRedSquares = Math.min(squaresArray.length / 2, 30); //sets the maximum permitted red squares for the stage
+    for (let i = minRedSquares; i <= maxRedSquares; i++) {
+      stageRedSquares.push(i);
     }
+    shuffleArray(stageRedSquares);
+    game.redSquares = stageRedSquares[0];
     stageApplyRedSquares();
-    stageTimer(); // to start the timer.
+    stageTimer();
   } else {
     //Code when game is completed, i.e. player completed stage 12
   };
