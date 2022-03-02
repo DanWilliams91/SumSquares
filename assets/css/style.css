@@ -13,8 +13,16 @@ body {
   background-position: center;
 }
 
-a {
-  color: inherit;
+.clickable {
+  cursor: pointer;
+}
+
+.unclickable {
+  cursor: not-allowed;
+}
+
+.half-text-size {
+  font-size: 0.75em;
 }
 
 .centered-text-box {

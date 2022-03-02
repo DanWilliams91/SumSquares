@@ -14,6 +14,7 @@ $(document).ready(function(){
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FORMULAE IN JS FILE
     - TRY HAVING THE INITIALLY HIDDEN ELEMENTS HIDDEN BY CSS RATHER THAN JS AS SOMETIMES THEY'LL SHOW FOR A SHORT TIME ON PAGE LOAD
+    - CHECK FORMULAE IN EXCEL AS S1=4, S2=6, S3=9, S4=12, S5=16 ALWAYS
     - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
@@ -109,7 +110,7 @@ function stageBegin() {
     <div id="player-start-input">
       <p>Count the RED squares
         <br>
-        <button id="go">GO!</button>
+        <button id="go" class="clickable">GO!</button>
       </p>
     </div>`);
   $("#go").on("click", function () {
@@ -297,7 +298,7 @@ function playerCorrect() {
 function playerIncorrect() {
   console.log("Player answered incorrectly!");
   squaresArray.removeClass("gray-square").addClass("red-square");
-  $("#player-start-input").empty().html("You got it wrong!")
+  $("#player-start-input").empty().html(`You got it wrong!<br>You reached<br>Stage ${game.stage}`)
   $("#timer").hide();
   $("#stage-number").hide();
   $("#restart").show();
@@ -465,28 +466,20 @@ function gridDisplayUpdate() {
 };
 
 
+//Event Handlers
+$("#page-title").on("mouseenter", (function () {
+    if (game.timer.sec < 5) {
+      $(this).removeClass("clickable").addClass("unclickable");
+    } else {
+      $(this).removeClass("unclickable").addClass("clickable");
+    };
+  }));
 
-$("a").on("click", function () { //setting condition on ALL anchors that timer not counting down
-  if (game.timer.sec < 5) {
-    console.log("player clicked mid-stage");
-  } else {
-    switch ($(this).parent().attr("id")) { //setting diff behaviours for each anchor element
-      case "page-title": //Home page link (NOT WORKING) (need to also set condition that game.stage not 0)
-        if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
-          window.location = "./index.html";
-        };
-        break;
-
-
-
-
-      default: 
-        console.log("it's the case that's not working");
-        
-    }
-
-
-    
+$("#page-title").on("click", function () {
+  if (game.stage != 0 && game.timer.sec == 5) {
+    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
+      window.location = "./index.html";
+    };
   };
 });
 
