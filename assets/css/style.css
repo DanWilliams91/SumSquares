@@ -13,6 +13,10 @@ body {
   background-position: center;
 }
 
+a {
+  color: inherit;
+}
+
 .centered-text-box {
   background-color: black;
   width: fit-content;
@@ -189,7 +193,8 @@ body {
 #start,
 #timer,
 #exit,
-#continue {
+#continue,
+#restart {
   font-size: 1.5em;
   margin: 0;
 }
@@ -217,7 +222,8 @@ body {
   #start,
   #timer,
   #exit,
-  #continue {
+  #continue,
+  #restart {
   font-size: 2.5em;
   margin: 0;
   }

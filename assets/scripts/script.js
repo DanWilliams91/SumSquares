@@ -1,24 +1,20 @@
 $(document).ready(function(){  
   initialAnimation();
 //ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
+//APART FROM SOME (NEED TO THINK ABOUT THIS - EG MAY BE EVENT LISTENERS)
 });
 
-/* JAVASCRIPT STRUCTURE PLAN
-  game{object} - this will store the game's state
-    game {
-      stage - integer (to track which stage the player is on)
-    }
-      landingPageAnimation() - animates through the squares until the game is started
-  startGame() - function (event listener on Play Game text) which will start a new game
-  gridDisplayUpdate() - function which adds new squares to the grid according to the stage and updates their classes
-  stageBegin() - shows a countdown before the stage starts, then calls stageInPlay
-  stageInfo() - updates the timer and stage number below the game area
-  stageInPlay() - squares are highlighted and timer countdown begins
-  stageTimer() - In-play countdown timer begins
-  stageEnd() - called when the timer reaches 0. Squares are re-hidden and the player
-                is asked to enter their answer.
-  checkAnswer() - compares the player's input to the correct answer
-  resetPage() - resets the webpage to its initial state
+/* TO DO:
+    - CREATE TOOLTIP FOR HOVERING OVER HELP ICON
+    - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
+    - INSTRUCTIONS FOR HOW TO PLAY GAME
+    - WHEN WRONG ANSWER IS ENTERED, CHANGE THE CURRENT "EXIT GAME" TO "RETRY" AND THE STAGE NUMBER AT THE BOTTOM TO "EXIT GAME"
+        - INSERT IN FUNCTION playerIncorrect()
+    - FINAL WINNING ANIMATION AND OTHER DOM CHANGES
+    - RESPONSIVE STYLING
+    - INSERT DESCRIPTIONS FOR ALL FORMULAE IN JS FILE
+    - TRY HAVING THE INITIALLY HIDDEN ELEMENTS HIDDEN BY CSS RATHER THAN JS AS SOMETIMES THEY'LL SHOW FOR A SHORT TIME ON PAGE LOAD
+    - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
 let game = {
@@ -34,7 +30,9 @@ let gridArea = $("#squares-container");
 // let squaresArray = $(".square");
 let singleSquareHTML = `<div class="square"></div>`;
 
+$("#help-icon").hide();
 $("#timer").hide();
+$("#restart").hide();
 $("#exit").hide();
 $("#continue").hide();
 $("#stage-number").hide();
@@ -84,6 +82,7 @@ function startGame() {
   textAreaRevision();
   gridDisplayUpdate();
   stageBegin();
+  $("#help-icon").show();
 }
 
 function nextStage() {
@@ -96,9 +95,7 @@ function nextStage() {
     stageBegin();
   } else {
     console.log("Game completed");
-    //Code when game is completed, i.e. player completed stage 12
-      //Final animation - flashing squares to congratulate
-      //Provide options to return to start page or start a new game
+    gameCompleted();
   };
 };
 
@@ -191,7 +188,10 @@ function stageSetup() {
  * Runs when the player has successfully passed the final stage.
  * Applies DOM changes to signify that the game has been completed.
  */
-function gameCompleted() {};
+function gameCompleted() {
+  $("#player-start-input").empty().html("GONGRATULATIONS!<br>You beat the game!");
+  $("exit").show();
+};
 
 /**
  * Applies the number of red squares to the grid according to the
@@ -224,7 +224,7 @@ function stageTimer() {
     };
     if (game.timer.sec == 0 && parseInt(game.timer.mSec) == 0) {
       clearInterval(decrease);
-      $("#timer").html(`Time's Up!`);
+      $("#timer").html(`&nbsp;Time's Up!&nbsp;`);
       stageEnd();
     };
   }, 5);
@@ -246,12 +246,20 @@ function stageEnd() {
       </p>
     </div>`);
   $("#player-submit").on("click", function (event) {
-    checkAnswer();
+    if (document.getElementById("player-answer").value == "") {
+      window.alert("Please input a numeric answer.");
+    } else {
+      checkAnswer();
+    }
   });
   $("#player-answer").focus();
   $("#player-answer").on("keydown", function (event) {
     if (event.key === "Enter") {
-      checkAnswer();
+      if (document.getElementById("player-answer").value == "") {
+        window.alert("Please input a numeric answer.");
+      } else {
+        checkAnswer();
+      };
     };
   });
 };
@@ -272,20 +280,29 @@ function checkAnswer() {
 
 function playerCorrect() {
   console.log("Player answered correctly!");
-  squaresArray.removeClass("gray-square red-square").addClass("green-square");
-  $("#player-start-input").empty().html("You got it right!")
-  $("#timer").hide();
-  $("#continue").show();
-}
+  if (game.stage < 14) {
+    squaresArray.removeClass("gray-square red-square").addClass("green-square");
+    $("#player-start-input").empty().html("You got it right!")
+    $("#timer").hide();
+    $("#continue").show();
+  } else if (game.stage = 14) {
+    gameCompleted();
+  } else {    
+    console.log("Error in playerCorrect function");
+    window.alert("An error has occured. The game will now exit.");
+    returnToInitial();
+  };
+};
 
 function playerIncorrect() {
   console.log("Player answered incorrectly!");
   squaresArray.removeClass("gray-square").addClass("red-square");
-  //display "you got it wrong" and insert button to call startGame() to restart
   $("#player-start-input").empty().html("You got it wrong!")
   $("#timer").hide();
+  $("#stage-number").hide();
+  $("#restart").show();
   $("#exit").show();
-}
+};
 
 
 /**
@@ -294,10 +311,12 @@ function playerIncorrect() {
  *  - the text viewed when the game is in play; or
  *  - the intial values if the player has decided to return to the landing screen.
  */
-function textAreaRevision() {
+function textAreaRevision() {  
+  $("#player-start-input").remove();
   if (game.stage == 1) {
     $("#start").hide();
     $("#how-to").hide();
+    $("#restart").hide();
     $("#exit").hide();
     $("#timer").show();
     $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
@@ -308,15 +327,15 @@ function textAreaRevision() {
     $("#start").show();
     $("#how-to").show();
     $("#timer").hide();
+    $("#restart").hide();
     $("#exit").hide();
     $("#stage-number").hide();
     console.log("textAreaRevision() - text reset to initial values");
-  }
-}
+  };
+};
 
 /**
  * Resets the screen to the initial layout when the user chooses to exit the game.
- * NOT YET TESTED
  */
 function returnToInitial() {
   game = {
@@ -339,7 +358,7 @@ function returnToInitial() {
  * depending on the current game stage.
  */
 function gridDisplayUpdate() {
-  switch(game.stage) {   
+  switch (game.stage) {   
     case 1:
       gridArea.empty();
       for (let i = 0; i < (4 * 4); i++) {
@@ -389,7 +408,7 @@ function gridDisplayUpdate() {
       };
       gridArea.children().addClass("square-grid-10x10");
       break;  
-    case 10:
+    case 8:
       gridArea.empty();
       for (let i = 0; i < (11 * 11); i++) {
         gridArea.append(singleSquareHTML);
@@ -439,15 +458,44 @@ function gridDisplayUpdate() {
       gridArea.children().addClass("square-grid-20x20");
       break;
     default:
-      gameCompleted();
+      console.log("Error in gridDisplayUpdate() function");
+      window.alert("An error has occured. The game will now exit.");
+      returnToInitial();
   };
 };
 
 
 
+$("a").on("click", function () { //setting condition on ALL anchors that timer not counting down
+  if (game.timer.sec < 5) {
+    console.log("player clicked mid-stage");
+  } else {
+    switch ($(this).parent().attr("id")) { //setting diff behaviours for each anchor element
+      case "page-title": //Home page link (NOT WORKING) (need to also set condition that game.stage not 0)
+        if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
+          window.location = "./index.html";
+        };
+        break;
 
+
+
+
+      default: 
+        console.log("it's the case that's not working");
+        
+    }
+
+
+    
+  };
+});
 
 $("#start").on("click", function() {
+  startGame();
+});
+
+$("#restart").on("click", function() {
+  returnToInitial();
   startGame();
 });
 
