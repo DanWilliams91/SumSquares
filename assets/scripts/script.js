@@ -1,5 +1,6 @@
 $(document).ready(function(){  
   initialAnimation();
+  initialElementHiding();
 //ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
 //APART FROM SOME (NEED TO THINK ABOUT THIS - EG MAY BE EVENT LISTENERS)
 });
@@ -8,16 +9,15 @@ $(document).ready(function(){
     - CREATE TOOLTIP FOR HOVERING OVER HELP ICON
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
     - INSTRUCTIONS FOR HOW TO PLAY GAME
-    - WHEN WRONG ANSWER IS ENTERED, CHANGE THE CURRENT "EXIT GAME" TO "RETRY" AND THE STAGE NUMBER AT THE BOTTOM TO "EXIT GAME"
-        - INSERT IN FUNCTION playerIncorrect()
     - FINAL WINNING ANIMATION AND OTHER DOM CHANGES
     - RESPONSIVE STYLING
-    - INSERT DESCRIPTIONS FOR ALL FORMULAE IN JS FILE
+    - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
     - TRY HAVING THE INITIALLY HIDDEN ELEMENTS HIDDEN BY CSS RATHER THAN JS AS SOMETIMES THEY'LL SHOW FOR A SHORT TIME ON PAGE LOAD
     - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
 let game = {
+  status: "incomplete",
   stage: 0,
   timer: {sec: 5, mSec: "000"},
   clock: 3,
@@ -30,13 +30,15 @@ let gridArea = $("#squares-container");
 // let squaresArray = $(".square");
 let singleSquareHTML = `<div class="square"></div>`;
 
-$("#help-icon").hide();
-$("#timer").hide();
-$("#restart").hide();
-$("#exit").hide();
-$("#continue").hide();
-$("#stage-number").hide();
-$("#replay").hide();
+function initialElementHiding() {
+  $("#help-icon").hide().removeClass("hidden");
+  $("#timer").hide().removeClass("hidden");
+  $("#restart").hide().removeClass("hidden");
+  $("#exit").hide().removeClass("hidden");
+  $("#continue").hide().removeClass("hidden");
+  $("#stage-number").hide().removeClass("hidden");
+  $("#replay").hide().removeClass("hidden");
+}
 
 //Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
 function shuffleArray(array) {
@@ -200,11 +202,26 @@ function stageSetup() {
  * Applies DOM changes to signify that the game has been completed.
  */
 function gameCompleted() {
+  game.status = "completed";
   $("#player-start-input").empty().html("GONGRATULATIONS!<br>You beat the game!");
   $("#timer").hide();
   $("#exit").show();
   $("#stage-number").hide();
   $("#replay").show();
+  finalAnimation();
+};
+
+function finalAnimation() {
+  let squaresArray = $(".square");
+  squaresArray.addClass("green-square");
+  let animation = setInterval(function () {
+    squaresArray.fadeTo(500, 0.1, function () {});
+    squaresArray.fadeTo(500, 1, function () {});
+    if (game.status !== "completed") {
+      $(squaresArray).removeClass("green-square");
+      clearInterval(animation);
+    };
+  });
 };
 
 /**
@@ -354,6 +371,7 @@ function textAreaRevision() {
  */
 function returnToInitial() {
   game = {
+    status: "incomplete",
     stage: 0,
     timer: {sec: 5, mSec: "000"},
     clock: 3,
