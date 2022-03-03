@@ -208,7 +208,8 @@ body {
 }
 
 #how-to,
-#stage-number {
+#stage-number,
+#replay {
   font-size: 1em;
   margin: 0;
 }
@@ -237,7 +238,8 @@ body {
   }
 
   #how-to,
-  #stage-number {
+  #stage-number,
+  #replay {
     font-size: 2em;
     margin: 0;
   }

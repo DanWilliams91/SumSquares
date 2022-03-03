@@ -14,7 +14,6 @@ $(document).ready(function(){
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FORMULAE IN JS FILE
     - TRY HAVING THE INITIALLY HIDDEN ELEMENTS HIDDEN BY CSS RATHER THAN JS AS SOMETIMES THEY'LL SHOW FOR A SHORT TIME ON PAGE LOAD
-    - CHECK FORMULAE IN EXCEL AS S1=4, S2=6, S3=9, S4=12, S5=16 ALWAYS
     - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
@@ -37,6 +36,7 @@ $("#restart").hide();
 $("#exit").hide();
 $("#continue").hide();
 $("#stage-number").hide();
+$("#replay").hide();
 
 //Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
 function shuffleArray(array) {
@@ -149,6 +149,7 @@ function stageInPlay() {
 };
 
 function stageSetup() {
+  let stageDifficulty = game.stage;
   if (game.stage <= 14) {
     setRedSquares();
     if (game.stage >= 10) {
@@ -161,27 +162,36 @@ function stageSetup() {
   };
 
   function setRedSquares() {
-      squaresArray = $(".square");
-      let stageDifficulty = game.stage;
-      var stageRedSquares = [];
-      let minRedSquares = Math.min(Math.max(Math.round(squaresArray.length / 4), Math.round(stageDifficulty * 1.5)), 20); //sets the minimum permitted red squares for the stage
-      let maxRedSquares = Math.min(Math.max(Math.round(squaresArray.length / 4), Math.round(stageDifficulty * 2.5)), 30); //sets the maximum permitted red squares for the stage
-      for (let i = minRedSquares; i <= maxRedSquares; i++) {
-        stageRedSquares.push(i);
-      };
-      shuffleArray(stageRedSquares);
-      game.redSquares = stageRedSquares[0];
+    var stageRedSquareOptions = [];
+    var minRedSquares;
+    var maxRedSquares;
+    switch (game.stage) {
+      case 1:
+      case 2:
+      case 3:
+        minRedSquares = Math.min(Math.round(stageDifficulty * 2.5), 25);
+        maxRedSquares = Math.min(Math.round(stageDifficulty * 4), 30);
+        break;
+      default:
+        minRedSquares = Math.min(Math.round(stageDifficulty * 3), 25);
+        maxRedSquares = Math.min(Math.round(stageDifficulty * 4.5), 30);
+    }
+    for (let i = minRedSquares; i <= maxRedSquares; i++) {
+      stageRedSquareOptions.push(i);
     };
+    shuffleArray(stageRedSquareOptions);
+    game.redSquares = stageRedSquareOptions[0];
+  };
 
   function setGreenSquares() {
-    var stageGreenSquares = [];
-    let minGreenSquares = Math.round(game.redSquares * 0.75);
-    let maxGreenSquares = Math.round(game.redSquares * 1.25);
+    var stageGreenSquareOptions = [];
+    let minGreenSquares = Math.round(stageDifficulty * 6);
+    let maxGreenSquares = Math.round(stageDifficulty * 6.5);
     for (let i = minGreenSquares; i <= maxGreenSquares; i++) {
-      stageGreenSquares.push(i);
+      stageGreenSquareOptions.push(i);
     };
-    shuffleArray(stageGreenSquares);
-    game.greenSquares = stageGreenSquares[0];
+    shuffleArray(stageGreenSquareOptions);
+    game.greenSquares = stageGreenSquareOptions[0];
   };
 };
 
@@ -191,7 +201,10 @@ function stageSetup() {
  */
 function gameCompleted() {
   $("#player-start-input").empty().html("GONGRATULATIONS!<br>You beat the game!");
-  $("exit").show();
+  $("#timer").hide();
+  $("#exit").show();
+  $("#stage-number").hide();
+  $("#replay").show();
 };
 
 /**
@@ -331,6 +344,7 @@ function textAreaRevision() {
     $("#restart").hide();
     $("#exit").hide();
     $("#stage-number").hide();
+    $("#replay").hide();
     console.log("textAreaRevision() - text reset to initial values");
   };
 };
@@ -499,6 +513,11 @@ $("#exit").on("click", function() {
 $("#continue").on("click", function() {
   nextStage();
   $(".square").removeClass("green-square");
+});
+
+$("#replay").on("click", function() {
+  returnToInitial();
+  startGame();
 });
 
 $("#how-to").on("click", function() {
