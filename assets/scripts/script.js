@@ -1,11 +1,14 @@
 $(document).ready(function(){  
   initialAnimation();
   initialElementHiding();
+  $(".clickable").attr("tabindex", "0");
 //ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
 //APART FROM SOME (NEED TO THINK ABOUT THIS - EG MAY BE EVENT LISTENERS)
 });
 
 /* TO DO:
+    - CHECK TABINDEX (ABOVE) HAS BEEN APPLIED CORRECTLY.
+      - WILL THEN NEED TO ADD MORE EVENT LISTENERS TO INCLUDE ENTER OR SPACE KEYS SIMULATING A CLICK
     - CREATE TOOLTIP FOR HOVERING OVER HELP ICON
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
     - INSTRUCTIONS FOR HOW TO PLAY GAME
@@ -542,6 +545,7 @@ $("#replay").on("click", function() {
 $("#how-to").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
+  $("#help-exit").hide();
   $("#instructions").fadeTo(400, 1, function() {
     $(this).show();
   })
@@ -550,6 +554,7 @@ $("#how-to").on("click", function() {
 $("#help-icon").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
+  $("#help-exit").show();
   $("#instructions").fadeTo(400, 1, function() {
     $(this).show();
   })
