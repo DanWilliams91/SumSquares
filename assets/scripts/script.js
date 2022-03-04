@@ -32,6 +32,7 @@ let singleSquareHTML = `<div class="square"></div>`;
 
 function initialElementHiding() {
   $("#help-icon").hide().removeClass("hidden");
+  $("#instructions").hide().removeClass("hidden");
   $("#timer").hide().removeClass("hidden");
   $("#restart").hide().removeClass("hidden");
   $("#exit").hide().removeClass("hidden");
@@ -203,7 +204,7 @@ function stageSetup() {
  */
 function gameCompleted() {
   game.status = "completed";
-  $("#player-start-input").empty().html("GONGRATULATIONS!<br>You beat the game!");
+  $("#player-start-input").empty().html("CONGRATULATIONS!<br>You beat the game!");
   $("#timer").hide();
   $("#exit").show();
   $("#stage-number").hide();
@@ -510,7 +511,7 @@ $("#page-title").on("mouseenter", (function () {
 $("#page-title").on("click", function () {
   if (game.stage != 0 && game.timer.sec == 5) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
-      window.location = "./index.html";
+      returnToInitial();
     };
   };
 });
@@ -539,11 +540,52 @@ $("#replay").on("click", function() {
 });
 
 $("#how-to").on("click", function() {
-  //Game instructions/help
+  $("#squares-container").hide();
+  $("#bottom-text-container").hide();
+  $("#instructions").fadeTo(400, 1, function() {
+    $(this).show();
+  })
 });
 
 $("#help-icon").on("click", function() {
-  //Game instructions/help
+  $("#squares-container").hide();
+  $("#bottom-text-container").hide();
+  $("#instructions").fadeTo(400, 1, function() {
+    $(this).show();
+  })
+});
+
+$("#help-close").on("click", function() {
+  $("#instructions").hide();
+  $("#squares-container").fadeTo(400, 1, function() {
+    $(this).show();
+  })
+  $("#bottom-text-container").fadeTo(400, 1, function() {
+    $(this).show();
+  })
+});
+
+$("#help-exit").on("click", function () {
+  if (game.stage != 0) {
+    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
+      $("#instructions").hide();
+      $("#squares-container").fadeTo(400, 1, function () {
+        $(this).show();
+      })
+      $("#bottom-text-container").fadeTo(400, 1, function () {
+        $(this).show();
+      })
+      returnToInitial();
+    };
+  } else {
+    $("#instructions").hide();
+    $("#squares-container").fadeTo(400, 1, function () {
+      $(this).show();
+    })
+    $("#bottom-text-container").fadeTo(400, 1, function () {
+      $(this).show();
+    })
+  }
 });
 
 
