@@ -158,6 +158,10 @@ button {
   background-color: red;
 }
 
+#mute-toggle {
+  display: none;
+}
+
 #center-nums {
   display: flex;
   justify-content: center;
@@ -165,7 +169,7 @@ button {
   font-size: 3em;
 }
 
-#mute-toggle {
+#mute-toggle-label {
 position: absolute;
 left: 1vw;
 top: 1vw;
@@ -283,7 +287,7 @@ margin-top: 0.25rem;
     font-size: 3em;
   }
   
-  #mute-toggle,
+  #mute-toggle-label,
   #help-icon {
     font-size: 3em;
   }

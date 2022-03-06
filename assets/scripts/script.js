@@ -1,6 +1,7 @@
 $(document).ready(function(){  
-  initialAnimation();
   initialElementHiding();
+  initialAnimation();
+  themeSoundHandler();
   checkWindowHeight();
   $(".clickable").attr("tabindex", "0");
 //ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
@@ -27,6 +28,11 @@ let textArea = $("#bottom-text-container");
 let gridArea = $("#squares-container");
 let singleSquareHTML = `<div class="square"></div>`;
 
+//Sounds
+let themeSong = new Audio("assets/audio/theme.mp3");
+
+
+//Functions
 function checkWindowHeight() {
   if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
     $("#game-area-container").hide();
@@ -77,6 +83,7 @@ function shuffleArray(array) {
  * ones in red until the game starts.
  */
 function initialAnimation() {
+  themeSoundHandler();
   let animation = setInterval(function () {
     console.log("initial animation iteration run");
     let squaresArray = $(".square");
@@ -100,6 +107,7 @@ function initialAnimation() {
  */
 function startGame() {
   console.log("startGame() running - player clicked 'Play Game'");
+  themeSong.pause();
   game.stage = 1;
   textAreaRevision();
   gridDisplayUpdate();
@@ -552,8 +560,23 @@ function gridDisplayUpdate() {
   };
 };
 
+function themeSoundHandler() {
+  if ($("#mute-toggle").is(":checked")) {
+    themeSong.pause();
+  } else {
+    if (game.stage == 0) {
+      themeSong.play();
+    };
+  };
+};
 
 //Event Handlers
+
+$(themeSong).on("ended", function () {
+  this.currentTime = 0;
+  themeSoundHandler();
+})
+
 $("#page-title").on("mouseenter", (function () {
   if (game.timer.sec < 5) {
     $(this).removeClass("clickable").addClass("unclickable");
@@ -651,6 +674,15 @@ $(document).on("keyup", function (event) {
     };
   };
 });
+
+$("#mute-toggle").on("click", function(){
+  if ($("#mute-toggle").is(":checked")) {
+    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
+  } else {
+    $("#mute-toggle-label").html("<i class='fas fa-volume-up clickable'></i>")
+  };
+  themeSoundHandler();
+}); 
 
 $(window).on("resize", function() {
     checkWindowHeight();
