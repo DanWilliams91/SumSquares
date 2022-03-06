@@ -29,6 +29,13 @@ button {
   outline: red solid 3px;
 }
 
+/* Method to remove arrows on number inputs taken from https://css-tricks.com/snippets/css/turn-off-number-input-spinners/ */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .hidden {
   display: none;
 }
@@ -253,6 +260,7 @@ margin-top: 0.25rem;
   width: 50%;
   display: block;
   margin: auto;
+  text-align: center;
 }
 
 #player-submit {
@@ -316,7 +324,7 @@ margin-top: 0.25rem;
 
   #instructions-container {
     font-size: 1.5em;
-    margin: 0 auto;
+    margin: 1em auto;
   }
 
   #player-start-input {

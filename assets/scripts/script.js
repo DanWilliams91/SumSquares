@@ -1,47 +1,59 @@
 $(document).ready(function(){  
   initialElementHiding();
-  initialAnimation();
-  themeSoundHandler();
   checkWindowHeight();
+  initialAnimation();
   $(".clickable").attr("tabindex", "0");
-//ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
-//APART FROM SOME (NEED TO THINK ABOUT THIS - EG MAY BE EVENT LISTENERS)
 });
 
 /* TO DO:
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
-    - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
-let game = {
+// Sounds section begins here
+const sndThemeSong = new Audio("assets/audio/theme.mp3");
+const sndStageReady = new Audio("assets/audio/stage-ready.mp3");
+const sndStageCountdown = new Audio("assets/audio/stage-countdown.mp3");
+const sndTimerActive = new Audio("assets/audio/timer-active.mp3");
+const sndPlayerAnswer = new Audio("assets/audio/enter-answer.mp3");
+const sndWrongAnswer = new Audio("assets/audio/incorrect-answer.mp3");
+const sndRightAnswer = new Audio("assets/audio/correct-answer.mp3");
+const sndGameCompleted = new Audio("assets/audio/game-completed.mp3");
+// Sounds section ends here
+
+// Game object starts here
+var game = {
   status: "incomplete",
+  display: "",
   stage: 0,
   timer: {sec: 5, mSec: "000"},
   clock: 3,
   redSquares: 0,
-  greenSquares: 0
+  greenSquares: 0,
+  currentSounds: []
 };
+// Game object ends here
 
-let textArea = $("#bottom-text-container");
-let gridArea = $("#squares-container");
-let singleSquareHTML = `<div class="square"></div>`;
+// Constant variables, used in multiple functions, begin here
+const textArea = $("#bottom-text-container");
+const gridArea = $("#squares-container");
+const singleSquareHTML = `<div class="square"></div>`;
+// Constant variables, used in multiple functions, end here
 
-//Sounds
-let themeSong = new Audio("assets/audio/theme.mp3");
-
-
-//Functions
+// Functions begin here
 function checkWindowHeight() {
   if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
     $("#game-area-container").hide();
     $("#bottom-text-container").hide();
     $("#game-rotate-container").show();
+    game.display = "hidden";
+
   } else {
     $("#game-area-container").show();
     $("#bottom-text-container").show();
     $("#game-rotate-container").hide();
+    game.display = "active";
   }
 };
 
@@ -53,9 +65,7 @@ function checkWindowHeight() {
 function initialElementHiding() {
   $("#help-icon").hide().removeClass("hidden");
   $("#instructions-container").hide().removeClass("hidden");
-  //TEMP
   $("#game-rotate-container").hide().removeClass("hidden");
-  //TEMP
   $("#timer").hide().removeClass("hidden");
   $("#restart").hide().removeClass("hidden");
   $("#exit").hide().removeClass("hidden");
@@ -67,7 +77,7 @@ function initialElementHiding() {
 /**
  * Shuffles an array which is passed as the argument, then returns the shuffled array 
  */
-//Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
+// Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
 function shuffleArray(array) {
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -83,7 +93,7 @@ function shuffleArray(array) {
  * ones in red until the game starts.
  */
 function initialAnimation() {
-  themeSoundHandler();
+  game.currentSounds = [sndThemeSong];
   let animation = setInterval(function () {
     console.log("initial animation iteration run");
     let squaresArray = $(".square");
@@ -101,13 +111,21 @@ function initialAnimation() {
   }, 800);
 };
 
+function soundSwitch(newSound) {
+  let fromSound = game.currentSounds[0];
+  fromSound.pause();
+  fromSound.currentTime = 0;
+  game.currentSounds = [newSound];
+  soundHandler();
+}
+
 /**
  * Runs when the player clicks "Play Game", which begins Stage 1 of the game and calls another function
  * to revise the text below the grid
  */
 function startGame() {
   console.log("startGame() running - player clicked 'Play Game'");
-  themeSong.pause();
+  soundSwitch(sndStageReady);
   game.stage = 1;
   textAreaRevision();
   gridDisplayUpdate();
@@ -140,6 +158,7 @@ function stageBegin() {
       <p>Count the RED squares</p>
       <button id="go" class="clickable">GO!</button>
     </div>`);
+  soundSwitch(sndStageReady);
   $("#go").focus().on("click", function () {
     console.log("'GO' CLICKED");
     countdown();
@@ -156,7 +175,7 @@ function countdown() {
   $("#player-start-input > p").empty();
   $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
   let count = setInterval(function () {
-    if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) { //Ensures the timer only reduces when the game area is visible
+    if (game.display === "active") { //Ensures the timer only reduces when the game area is visible
       game.clock -= 1;
       $("#center-nums").empty();
       $("#center-nums").html(`${game.clock}`);
@@ -167,6 +186,7 @@ function countdown() {
       };
     }
   }, 1000);
+  soundSwitch(sndStageCountdown);
 };
 
 /**
@@ -180,6 +200,7 @@ function stageInPlay() {
   console.log("Game in play");
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
+  console.log("stageInPlay finished");
   stageSetup();
 };
 
@@ -240,6 +261,23 @@ function stageSetup() {
     shuffleArray(stageGreenSquareOptions);
     game.greenSquares = stageGreenSquareOptions[0];
   };
+  console.log("stageSetup finished");
+};
+
+/**
+ * Applies the number of red squares to the grid according to the
+ * game.redSquares value.
+ */
+function stageApplyColoredSquares() {  
+  squaresArray = $(".square");
+  shuffleArray(squaresArray);
+  for (let i = 0; i < game.greenSquares; i++) {
+    $(squaresArray[i]).addClass("green-square");
+  };  
+  shuffleArray(squaresArray);
+  for (let i = 0; i < game.redSquares; i++) {
+    $(squaresArray[i]).addClass("red-square");
+  };
 };
 
 /**
@@ -260,6 +298,7 @@ function gameCompleted() {
  * Displays an animation if the player completes the final stage
  */
 function finalAnimation() {
+  soundSwitch(sndGameCompleted);
   let squaresArray = $(".square");
   squaresArray.addClass("green-square");
   let animation = setInterval(function () {
@@ -270,22 +309,6 @@ function finalAnimation() {
       clearInterval(animation);
     };
   });
-};
-
-/**
- * Applies the number of red squares to the grid according to the
- * game.redSquares value.
- */
-function stageApplyColoredSquares() {  
-  squaresArray = $(".square");
-  shuffleArray(squaresArray);
-  for (let i = 0; i < game.greenSquares; i++) {
-    $(squaresArray[i]).addClass("green-square");
-  };  
-  shuffleArray(squaresArray);
-  for (let i = 0; i < game.redSquares; i++) {
-    $(squaresArray[i]).addClass("red-square");
-  };
 };
 
 /**
@@ -306,9 +329,9 @@ function timerText(sec, mSec) {
  * Begins the countdown of the in-play time limit.
  */
 function stageTimer() {
+  soundSwitch(sndTimerActive);
   let decrease = setInterval(function () {
-
-    if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) { //Ensures the timer only reduces when the game area is visible
+    if (game.display === "active") { //Ensures the timer only reduces when the game area is visible
       if (parseInt(game.timer.mSec) > 0) {
         game.timer.mSec -= 5;
         $("#timer").html(timerText(game.timer.sec, parseInt(game.timer.mSec).toString().padStart(3, "0")));
@@ -331,6 +354,7 @@ function stageTimer() {
  */
 function stageEnd() {
   console.log("stage ended");
+  soundSwitch(sndPlayerAnswer);
   game.timer = {sec: 5, mSec: "000"};
   $(".square").removeClass("red-square green-square").addClass("gray-square");
   $(gridArea).append(`
@@ -374,7 +398,7 @@ function checkAnswer() {
 };
 
 function playerCorrect() {
-  console.log("Player answered correctly!");
+  soundSwitch(sndRightAnswer);
   if (game.stage < 14) {
     squaresArray.removeClass("gray-square red-square").addClass("green-square");
     $("#player-start-input").empty().html("You got it right!")
@@ -390,6 +414,7 @@ function playerCorrect() {
 };
 
 function playerIncorrect() {
+  soundSwitch(sndWrongAnswer);
   console.log("Player answered incorrectly!");
   squaresArray.removeClass("gray-square").addClass("red-square");
   $("#player-start-input").empty().html(`You got it wrong!<br>You reached<br>Stage ${game.stage}`)
@@ -433,13 +458,21 @@ function textAreaRevision() {
  * Resets the screen to the initial layout when the user chooses to exit the game.
  */
 function returnToInitial() {
+  soundSwitch(sndThemeSong);
   game = {
     status: "incomplete",
+    display: "",
     stage: 0,
-    timer: {sec: 5, mSec: "000"},
+    timer: {
+      sec: 5,
+      mSec: "000"
+    },
     clock: 3,
-    redSquares: 0
-  }
+    redSquares: 0,
+    greenSquares: 0,
+    currentSounds: [sndThemeSong]
+  };  
+  checkWindowHeight();
   gridArea.empty();
   for (let i = 0; i < 16; i++) {
     gridArea.append(singleSquareHTML);
@@ -560,23 +593,40 @@ function gridDisplayUpdate() {
   };
 };
 
-function themeSoundHandler() {
+function soundHandler() {
   if ($("#mute-toggle").is(":checked")) {
-    themeSong.pause();
+    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
+    $(".clickable").attr("tabindex", "0");
+    for (let i = 0; i < game.currentSounds.length; i++) {
+      game.currentSounds[i].pause();
+    }
   } else {
-    if (game.stage == 0) {
-      themeSong.play();
-    };
+    $("#mute-toggle-label").html("<i class='fas fa-volume-up clickable'></i>");
+    $(".clickable").attr("tabindex", "0");
+    for (let i = 0; i < game.currentSounds.length; i++) {
+      game.currentSounds[i].play();
+    }
   };
 };
+// Functions end here
 
-//Event Handlers
-
-$(themeSong).on("ended", function () {
+// Event handlers begin here
+/** Enables sndStageReady to be looped (i.e. replayed once the sound ends) */
+$(sndStageReady).on("ended", function () {
   this.currentTime = 0;
-  themeSoundHandler();
+  soundHandler();
 })
 
+/** Enables sndThemeSong to be looped (i.e. replayed once the sound ends) */
+$(sndThemeSong).on("ended", function () {
+  this.currentTime = 0;
+  soundHandler();
+})
+
+/**
+ * Provides visual feedback to the user that the page title is not clickable
+ * when the in-stage timer is counting down
+ */
 $("#page-title").on("mouseenter", (function () {
   if (game.timer.sec < 5) {
     $(this).removeClass("clickable").addClass("unclickable");
@@ -585,6 +635,11 @@ $("#page-title").on("mouseenter", (function () {
   };
 }));
 
+/**
+ * Allows the user to confirm if they want to reset the game when they click
+ * on the page title (which takes them back to the inital page).
+ * This prevents accidental loss of game progress.
+ */
 $("#page-title").on("click", function () {
   if (game.stage != 0 && game.timer.sec == 5) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
@@ -593,29 +648,35 @@ $("#page-title").on("click", function () {
   };
 });
 
+/** Starts the game when the user clicks "Play Game" */
 $("#start").on("click", function() {
   startGame();
 });
 
+/** Returns to the initial page when the user clicks "Restart" */
 $("#restart").on("click", function() {
   returnToInitial();
   startGame();
 });
 
+/** Returns to the initial page when the user clicks "Exit" */
 $("#exit").on("click", function() {
   returnToInitial();
 });
 
+/** Progresses to the next stage when the user clicks "Click Here to Continue" */
 $("#continue").on("click", function() {
   nextStage();
   $(".square").removeClass("green-square");
 });
 
+/** Returns to the initial page and automatically starts a new game when the user clicks "Play Again" */
 $("#replay").on("click", function() {
   returnToInitial();
   startGame();
 });
 
+/** Hides some elements of the DOM and displays the game instructions when the user clicks "How to Play" */
 $("#how-to").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
@@ -625,6 +686,7 @@ $("#how-to").on("click", function() {
   });
 });
 
+/** Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon */
 $("#help-icon").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
@@ -634,6 +696,7 @@ $("#help-icon").on("click", function() {
   });
 });
 
+/** Hides the game instructions and restores the game elements of the DOM when the user clicks "Return to Game" */
 $("#help-close").on("click", function() {
   $("#instructions-container").hide();
   $("#squares-container").fadeTo(400, 1, function() {
@@ -644,6 +707,7 @@ $("#help-close").on("click", function() {
   });
 });
 
+/** Hides the game instructions and returns to the initial page display when the user clicks "Return to Game" */
 $("#help-exit").on("click", function () {
   if (game.stage != 0) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
@@ -667,6 +731,7 @@ $("#help-exit").on("click", function () {
   };
 });
 
+/** Simulates a mouse click when the user clicks the "enter" or "space" keyboard keys*/
 $(document).on("keyup", function (event) {
   if ($(":focus").attr("id") !== "go") {
     if (event.which === 13 || event.which === 32) {
@@ -675,17 +740,20 @@ $(document).on("keyup", function (event) {
   };
 });
 
-$("#mute-toggle").on("click", function(){
-  if ($("#mute-toggle").is(":checked")) {
-    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
-  } else {
-    $("#mute-toggle-label").html("<i class='fas fa-volume-up clickable'></i>")
-  };
-  themeSoundHandler();
-}); 
+/** Calls the soundHandler function when the user clicks the "mute-toggle" checkbox */
+$("#mute-toggle").on("click", function () {
+  soundHandler();
+});
 
+/** Simulates a mouse click of the "mute-toggle" checkbox when the user clicks the "mute-toggle-label" icon */
+$("#mute-toggle-label").on("click", function () {
+  $("#mute-toggle").click();
+});
+
+/** Calls the checkWindowHeight function when the window is resized */
 $(window).on("resize", function() {
     checkWindowHeight();
 });
+//Event handlers end here
 
-module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage }; //variables/functions to go here to export to test file, separated by commas
+module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage };
