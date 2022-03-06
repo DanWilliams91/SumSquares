@@ -1,21 +1,16 @@
 $(document).ready(function(){  
   initialAnimation();
   initialElementHiding();
+  checkWindowHeight();
   $(".clickable").attr("tabindex", "0");
 //ALL FINISHED CODE TO GO IN HERE ONCE TESTS PASSED
 //APART FROM SOME (NEED TO THINK ABOUT THIS - EG MAY BE EVENT LISTENERS)
 });
 
 /* TO DO:
-    - CHECK TABINDEX (ABOVE) HAS BEEN APPLIED CORRECTLY.
-      - WILL THEN NEED TO ADD MORE EVENT LISTENERS TO INCLUDE ENTER OR SPACE KEYS SIMULATING A CLICK
-    - CREATE TOOLTIP FOR HOVERING OVER HELP ICON
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
-    - INSTRUCTIONS FOR HOW TO PLAY GAME
-    - FINAL WINNING ANIMATION AND OTHER DOM CHANGES
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
-    - TRY HAVING THE INITIALLY HIDDEN ELEMENTS HIDDEN BY CSS RATHER THAN JS AS SOMETIMES THEY'LL SHOW FOR A SHORT TIME ON PAGE LOAD
     - CONSIDER ADDING GAME SOUNDS IF THERE'S TIME - RESEARCH NEEDED FOR OPEN SOURCES
 */
 
@@ -30,20 +25,42 @@ let game = {
 
 let textArea = $("#bottom-text-container");
 let gridArea = $("#squares-container");
-// let squaresArray = $(".square");
 let singleSquareHTML = `<div class="square"></div>`;
 
+function checkWindowHeight() {
+  if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
+    $("#game-area-container").hide();
+    $("#bottom-text-container").hide();
+    $("#game-rotate-container").show();
+  } else {
+    $("#game-area-container").show();
+    $("#bottom-text-container").show();
+    $("#game-rotate-container").hide();
+  }
+};
+
+/**
+ * Removes the class "hidden" from selected elements and hides those elements.
+ * The purpose of this is for JavaScript to take over the element hiding from CSS.
+ * See the Bugs section of the README file for an explanation on why this method has been used.
+ */
 function initialElementHiding() {
   $("#help-icon").hide().removeClass("hidden");
-  $("#instructions").hide().removeClass("hidden");
+  $("#instructions-container").hide().removeClass("hidden");
+  //TEMP
+  $("#game-rotate-container").hide().removeClass("hidden");
+  //TEMP
   $("#timer").hide().removeClass("hidden");
   $("#restart").hide().removeClass("hidden");
   $("#exit").hide().removeClass("hidden");
   $("#continue").hide().removeClass("hidden");
   $("#stage-number").hide().removeClass("hidden");
   $("#replay").hide().removeClass("hidden");
-}
+};
 
+/**
+ * Shuffles an array which is passed as the argument, then returns the shuffled array 
+ */
 //Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
 function shuffleArray(array) {
   for (var i = array.length - 1; i > 0; i--) {
@@ -61,20 +78,18 @@ function shuffleArray(array) {
  */
 function initialAnimation() {
   let animation = setInterval(function () {
-    console.log("initial animation activated");
+    console.log("initial animation iteration run");
     let squaresArray = $(".square");
     shuffleArray(squaresArray);
     for(let i = 0; i < 4; i++) {
       $(squaresArray[i]).addClass("red-square");
     }
     if (game.stage !== 0) {
-      console.log("red squares cleared");
       $(squaresArray).removeClass("red-square");
       clearInterval(animation);
     }
     setTimeout(() =>{
       $(squaresArray).removeClass("red-square");
-      console.log("squares deleted");
     }, 400);
   }, 800);
 };
@@ -90,7 +105,7 @@ function startGame() {
   gridDisplayUpdate();
   stageBegin();
   $("#help-icon").show();
-}
+};
 
 function nextStage() {
   game.stage++;
@@ -110,16 +125,14 @@ function stageBegin() {
   $("#continue").hide();
   $("#timer").show();
   console.log(`Stage ${game.stage} Started`);
-  $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
+  $("#timer").html(timerText(game.timer.sec, game.timer.mSec));
   gridArea.children().addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
-      <p>Count the RED squares
-        <br>
-        <button id="go" class="clickable">GO!</button>
-      </p>
+      <p>Count the RED squares</p>
+      <button id="go" class="clickable">GO!</button>
     </div>`);
-  $("#go").on("click", function () {
+  $("#go").focus().on("click", function () {
     console.log("'GO' CLICKED");
     countdown();
   });
@@ -131,20 +144,28 @@ function stageBegin() {
  */
 function countdown() {
   console.log("countdown() called");
+  $("#go").remove();
   $("#player-start-input > p").empty();
   $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
-  let count = setInterval (function () {  
-    game.clock -= 1;    
-    $("#center-nums").empty();
-    $("#center-nums").html(`${game.clock}`);
-    console.log("time logged");
-    if (game.clock < 1) {
-      clearInterval(count);      
-      stageInPlay();
-    };
+  let count = setInterval(function () {
+    if ($(window).height() > 500) {
+      game.clock -= 1;
+      $("#center-nums").empty();
+      $("#center-nums").html(`${game.clock}`);
+      console.log("time logged");
+      if (game.clock < 1) {
+        clearInterval(count);
+        stageInPlay();
+      };
+    }
   }, 1000);
 };
 
+/**
+ * Resets the game's redSquares and greenSquares values to 0,
+ * removes the grid overlay and the gray colors of the squares,
+ * then calls the stageSetup function
+ */
 function stageInPlay() {
   game.redSquares = 0;
   game.greenSquares = 0;
@@ -154,6 +175,10 @@ function stageInPlay() {
   stageSetup();
 };
 
+/**
+ * Calculates the number of red and/or green squares for the current stage.
+ * Assigns random values to the game keys redSquares and, when applicable, greenSquares
+ */
 function stageSetup() {
   let stageDifficulty = game.stage;
   if (game.stage <= 14) {
@@ -167,6 +192,10 @@ function stageSetup() {
     gameCompleted();
   };
 
+  /**
+    * Calculates the number of red squares for the current stage.
+    * Assigns a random value to the redSquares game key.
+    */
   function setRedSquares() {
     var stageRedSquareOptions = [];
     var minRedSquares;
@@ -189,6 +218,10 @@ function stageSetup() {
     game.redSquares = stageRedSquareOptions[0];
   };
 
+  /**
+    * Calculates the number of green squares for the current stage.
+    * Assigns a random value to the greenSquares game key.
+    */
   function setGreenSquares() {
     var stageGreenSquareOptions = [];
     let minGreenSquares = Math.round(stageDifficulty * 6);
@@ -215,6 +248,9 @@ function gameCompleted() {
   finalAnimation();
 };
 
+/**
+ * Displays an animation if the player completes the final stage
+ */
 function finalAnimation() {
   let squaresArray = $(".square");
   squaresArray.addClass("green-square");
@@ -245,29 +281,45 @@ function stageApplyColoredSquares() {
 };
 
 /**
+Returns the layout and values of the game timer when the correct arguments are provided 
+*/
+function timerText(sec, mSec) { 
+  return `
+    <div>
+      &nbsp;Time Remaining:&nbsp;
+    </div>
+    <div>
+    ${sec}.${mSec}&nbsp;
+    </div>
+  `
+};
+
+/**
  * Begins the countdown of the in-play time limit.
  */
 function stageTimer() {
-  let decrease = setInterval (function () {
-    if (parseInt(game.timer.mSec) > 0) {
-      game.timer.mSec -= 5;
-      $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${parseInt(game.timer.mSec).toString().padStart(3, "0")}&nbsp;`);      
-    } else {
-      game.timer.mSec = 995;
-      game.timer.sec -= 1;
-      $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${parseInt(game.timer.mSec).toString().padStart(3, "0")}&nbsp;`);
-    };
-    if (game.timer.sec == 0 && parseInt(game.timer.mSec) == 0) {
-      clearInterval(decrease);
-      $("#timer").html(`&nbsp;Time's Up!&nbsp;`);
-      stageEnd();
-    };
+  let decrease = setInterval(function () {
+
+    if ($(window).height() > 500) { //Ensures the timer only reduces when the game area is visible
+      if (parseInt(game.timer.mSec) > 0) {
+        game.timer.mSec -= 5;
+        $("#timer").html(timerText(game.timer.sec, parseInt(game.timer.mSec).toString().padStart(3, "0")));
+      } else {
+        game.timer.mSec = 995;
+        game.timer.sec -= 1;
+        $("#timer").html(timerText(game.timer.sec, parseInt(game.timer.mSec).toString().padStart(3, "0")));
+      };
+      if (game.timer.sec == 0 && parseInt(game.timer.mSec) == 0) {
+        clearInterval(decrease);
+        $("#timer").html(`&nbsp;Time's Up!&nbsp;`);
+        stageEnd();
+      };
+    }
   }, 5);
 };
 
 /**
  * Displays an area for the player to input their answer for each stage.
- * NEED TO ENSURE INPUT REQUIRED
  */
 function stageEnd() {
   console.log("stage ended");
@@ -311,7 +363,7 @@ function checkAnswer() {
   } else {
     playerIncorrect()
   }
-} 
+};
 
 function playerCorrect() {
   console.log("Player answered correctly!");
@@ -338,7 +390,6 @@ function playerIncorrect() {
   $("#restart").show();
   $("#exit").show();
 };
-
 
 /**
  * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
@@ -388,7 +439,7 @@ function returnToInitial() {
   gridArea.children().addClass("square-grid-4x4");
   initialAnimation();
   textAreaRevision();
-}
+};
 
 /**
  * Checks the current game stage and adds the relevant number of squares to the grid
@@ -504,12 +555,12 @@ function gridDisplayUpdate() {
 
 //Event Handlers
 $("#page-title").on("mouseenter", (function () {
-    if (game.timer.sec < 5) {
-      $(this).removeClass("clickable").addClass("unclickable");
-    } else {
-      $(this).removeClass("unclickable").addClass("clickable");
-    };
-  }));
+  if (game.timer.sec < 5) {
+    $(this).removeClass("clickable").addClass("unclickable");
+  } else {
+    $(this).removeClass("unclickable").addClass("clickable");
+  };
+}));
 
 $("#page-title").on("click", function () {
   if (game.stage != 0 && game.timer.sec == 5) {
@@ -546,53 +597,63 @@ $("#how-to").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
   $("#help-exit").hide();
-  $("#instructions").fadeTo(400, 1, function() {
+  $("#instructions-container").fadeTo(400, 1, function() {
     $(this).show();
-  })
+  });
 });
 
 $("#help-icon").on("click", function() {
   $("#squares-container").hide();
   $("#bottom-text-container").hide();
   $("#help-exit").show();
-  $("#instructions").fadeTo(400, 1, function() {
+  $("#instructions-container").fadeTo(400, 1, function() {
     $(this).show();
-  })
+  });
 });
 
 $("#help-close").on("click", function() {
-  $("#instructions").hide();
+  $("#instructions-container").hide();
   $("#squares-container").fadeTo(400, 1, function() {
     $(this).show();
-  })
+  });
   $("#bottom-text-container").fadeTo(400, 1, function() {
     $(this).show();
-  })
+  });
 });
 
 $("#help-exit").on("click", function () {
   if (game.stage != 0) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
-      $("#instructions").hide();
+      $("#instructions-container").hide();
       $("#squares-container").fadeTo(400, 1, function () {
         $(this).show();
-      })
+      });
       $("#bottom-text-container").fadeTo(400, 1, function () {
         $(this).show();
-      })
+      });
       returnToInitial();
     };
   } else {
-    $("#instructions").hide();
+    $("#instructions-container").hide();
     $("#squares-container").fadeTo(400, 1, function () {
       $(this).show();
-    })
+    });
     $("#bottom-text-container").fadeTo(400, 1, function () {
       $(this).show();
-    })
-  }
+    });
+  };
 });
 
+$(document).on("keyup", function (event) {
+  if ($(":focus").attr("id") !== "go") {
+    if (event.which === 13 || event.which === 32) {
+      $(":focus").click();
+    };
+  };
+});
 
+$(window).on("resize", function() {
+    checkWindowHeight();
+});
 
 module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage }; //variables/functions to go here to export to test file, separated by commas

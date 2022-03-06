@@ -10,13 +10,23 @@ body {
   font-family: "Nova Square", cursive;
   color: red;
   background-image: url("../images/bg-img-grey.png");
-  border-radius: 3%;
   margin: 1em 0.5em;
   width: calc(var(--max-width));
   height: calc(var(--max-height));
   overflow: hidden;
   display: grid;
   align-content: center;
+}
+
+button {
+  background-color: lime;
+  border-radius: 20%;
+  color: red;
+  font-family: 'Nova Square', cursive;
+}
+
+:focus-visible {
+  outline: red solid 3px;
 }
 
 .hidden {
@@ -39,7 +49,6 @@ body {
   background-color: black;
   width: fit-content;
   margin: auto;
-  border-radius: 10%;
 }
 
 .square {
@@ -149,10 +158,6 @@ body {
   background-color: red;
 }
 
-#title-help-container {
-  margin-bottom: 1em;
-}
-
 #center-nums {
   display: flex;
   justify-content: center;
@@ -160,14 +165,22 @@ body {
   font-size: 3em;
 }
 
-#help-icon {
-  position: absolute;
-  right: 1vw;
-  top: 1vw;
-  margin-top: 0.25rem;
+#mute-toggle {
+position: absolute;
+left: 1vw;
+top: 1vw;
+margin-top: 0.25rem;
+  
 }
 
-#instructions {
+#help-icon {
+position: absolute;
+right: 1vw;
+top: 1vw;
+margin-top: 0.25rem;
+}
+
+#instructions-container {
   margin: auto auto;
   text-align: center;
   padding: 0.5em;
@@ -176,15 +189,22 @@ body {
   z-index: 1;
   max-width: 70vh;
   left: 10vw;
+  border-radius: 3%;
 }
 
 #help-exit {
-  padding-top: 0.5em;
+  margin-top: 0.5em;
+}
+
+#game-rotate-container > p {
+  background-color: black;
+  width: max-content;
+  margin: 1em auto;
 }
 
 #squares-container {
-  margin: auto auto;
-  max-width: 70vh;
+  margin: 1vh auto;
+  max-width: 56vh;
   position: relative;
   text-align: center;
   padding: 0.5em;
@@ -206,27 +226,36 @@ body {
   border-radius: 10%;
   border: var(--border-width) solid;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 #player-start-input p {
-  height: -webkit-fill-available;
+  margin: auto;
 }
 
 #go {
   font-size: inherit;
-  background-color: lime;
-  border-radius: 20%;
-  color: red;
-  font-family: 'Nova Square', cursive;
-  margin-top: 10%;
+  margin-bottom: 10%;
 }
 
 #bottom-text-container {
   text-align: center;
-  margin-top: 1em;
   width: calc(var(--max-width));
+}
+
+#player-answer {
+  width: 50%;
+  display: block;
+  margin: auto;
+}
+
+#player-submit {
+  background-color: lime;
+  color: red;
+  font-family: 'Nova Square', cursive;
+  border-radius: 20%;
 }
 
 /* CLASS TO BE ADDED FOR THESE */
@@ -236,7 +265,7 @@ body {
 #continue,
 #restart {
   font-size: 1.5em;
-  margin: 0;
+  margin: 0 auto;
 }
 
 /* CLASS TO BE ADDED FOR THESE */
@@ -247,18 +276,16 @@ body {
   margin: 0;
 }
 
-@media screen and (min-width: 400px) {
+/*Media queries begin here */
+@media screen and (min-width: 426px) {
 
   h1 {
     font-size: 3em;
   }
   
+  #mute-toggle,
   #help-icon {
     font-size: 3em;
-  }
-
-  #player-start-input {
-    font-size: 2em;
   }
 
   /* CLASS TO BE ADDED FOR THESE */
@@ -268,7 +295,7 @@ body {
   #continue,
   #restart {
   font-size: 2.5em;
-  margin: 0;
+  margin: 0 auto;
   }
 
   /* CLASS TO BE ADDED FOR THESE */
@@ -281,14 +308,47 @@ body {
 
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 769px) {
 
-  #player-start-input {
-    font-size: 3em;
+  #instructions-container {
+    font-size: 1.5em;
+    margin: 0 auto;
   }
 
-  #center-nums {
-    font-size: 4em;
+  #player-start-input {
+    font-size: 1.5em;
   }
 
 }
+
+@media screen and (min-width: 1025px) {
+
+  /*currently empty*/
+
+}
+
+/* @media screen and (max-height: 500px) {
+
+  #game-area-container,
+  #bottom-text-container {
+    display: none;
+  }
+
+  #game-rotate-container {
+    display: block;
+  }
+
+}
+
+@media screen and (min-height: 501px) {
+
+  #game-area-container,
+  #bottom-text-container {
+    display: block;
+  }
+
+  #game-rotate-container {
+    display: none;
+  }
+
+} */
