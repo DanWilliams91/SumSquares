@@ -148,7 +148,7 @@ function countdown() {
   $("#player-start-input > p").empty();
   $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
   let count = setInterval(function () {
-    if ($(window).height() > 500) {
+    if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) { //Ensures the timer only reduces when the game area is visible
       game.clock -= 1;
       $("#center-nums").empty();
       $("#center-nums").html(`${game.clock}`);
@@ -300,7 +300,7 @@ function timerText(sec, mSec) {
 function stageTimer() {
   let decrease = setInterval(function () {
 
-    if ($(window).height() > 500) { //Ensures the timer only reduces when the game area is visible
+    if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) { //Ensures the timer only reduces when the game area is visible
       if (parseInt(game.timer.mSec) > 0) {
         game.timer.mSec -= 5;
         $("#timer").html(timerText(game.timer.sec, parseInt(game.timer.mSec).toString().padStart(3, "0")));
