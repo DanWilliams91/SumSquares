@@ -260,6 +260,7 @@ margin-top: 0.25rem;
   width: 50%;
   display: block;
   margin: auto;
+  font-size: inherit;
   text-align: center;
 }
 
@@ -267,7 +268,9 @@ margin-top: 0.25rem;
   background-color: lime;
   color: red;
   font-family: 'Nova Square', cursive;
+  font-size: inherit;
   border-radius: 20%;
+  margin-bottom: 0.5em;
 }
 
 /* CLASS TO BE ADDED FOR THESE */
@@ -333,34 +336,10 @@ margin-top: 0.25rem;
 
 }
 
-@media screen and (min-width: 1025px) {
+@media screen and (min-width: 1441px) {
 
-  /*currently empty*/
-
-}
-
-/* @media screen and (max-height: 500px) {
-
-  #game-area-container,
-  #bottom-text-container {
-    display: none;
-  }
-
-  #game-rotate-container {
-    display: block;
+  #player-start-input {
+    font-size: 2.5em;
   }
 
 }
-
-@media screen and (min-height: 501px) {
-
-  #game-area-container,
-  #bottom-text-container {
-    display: block;
-  }
-
-  #game-rotate-container {
-    display: none;
-  }
-
-} */

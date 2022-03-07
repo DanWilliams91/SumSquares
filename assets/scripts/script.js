@@ -11,7 +11,7 @@ $(document).ready(function(){
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
 */
 
-// Sounds section begins here
+// Sound variables section begins here
 const sndThemeSong = new Audio("assets/audio/theme.mp3");
 const sndStageReady = new Audio("assets/audio/stage-ready.mp3");
 const sndStageCountdown = new Audio("assets/audio/stage-countdown.mp3");
@@ -20,7 +20,13 @@ const sndPlayerAnswer = new Audio("assets/audio/enter-answer.mp3");
 const sndWrongAnswer = new Audio("assets/audio/incorrect-answer.mp3");
 const sndRightAnswer = new Audio("assets/audio/correct-answer.mp3");
 const sndGameCompleted = new Audio("assets/audio/game-completed.mp3");
-// Sounds section ends here
+// Sound variables section ends here
+
+// Constant variables, used in multiple functions, begin here
+const textArea = $("#bottom-text-container");
+const gridArea = $("#squares-container");
+const singleSquareHTML = `<div class="square"></div>`;
+// Constant variables, used in multiple functions, end here
 
 // Game object starts here
 var game = {
@@ -35,23 +41,21 @@ var game = {
 };
 // Game object ends here
 
-// Constant variables, used in multiple functions, begin here
-const textArea = $("#bottom-text-container");
-const gridArea = $("#squares-container");
-const singleSquareHTML = `<div class="square"></div>`;
-// Constant variables, used in multiple functions, end here
-
 // Functions begin here
 function checkWindowHeight() {
   if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
     $("#game-area-container").hide();
-    $("#bottom-text-container").hide();
+    $(textArea).hide();
+    $("#help-icon").hide();
     $("#game-rotate-container").show();
     game.display = "hidden";
 
   } else {
     $("#game-area-container").show();
-    $("#bottom-text-container").show();
+    $(textArea).show();
+    if (game.stage !== 0) {
+      $("#help-icon").show();
+    }
     $("#game-rotate-container").hide();
     game.display = "active";
   }
@@ -113,8 +117,10 @@ function initialAnimation() {
 
 function soundSwitch(newSound) {
   let fromSound = game.currentSounds[0];
-  fromSound.pause();
-  fromSound.currentTime = 0;
+  if (!$(fromSound).attr("src").includes("correct-answer")) {
+    fromSound.pause();
+    fromSound.currentTime = 0;
+  }
   game.currentSounds = [newSound];
   soundHandler();
 }
@@ -359,10 +365,9 @@ function stageEnd() {
   $(".square").removeClass("red-square green-square").addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
-      <p>How many RED squares did you count?
-        <input id="player-answer" type="number">
-        <button id="player-submit" data-type="submit" required>Check</button>
-      </p>
+      <p>How many RED squares did you count?</p>
+      <input id="player-answer" type="number">
+      <button id="player-submit" data-type="submit" required>Check</button>
     </div>`);
   $("#player-submit").on("click", function (event) {
     if (document.getElementById("player-answer").value == "") {
@@ -398,12 +403,12 @@ function checkAnswer() {
 };
 
 function playerCorrect() {
-  soundSwitch(sndRightAnswer);
   if (game.stage < 14) {
     squaresArray.removeClass("gray-square red-square").addClass("green-square");
     $("#player-start-input").empty().html("You got it right!")
     $("#timer").hide();
     $("#continue").show();
+    soundSwitch(sndRightAnswer);
   } else if (game.stage = 14) {
     gameCompleted();
   } else {    
@@ -478,6 +483,7 @@ function returnToInitial() {
     gridArea.append(singleSquareHTML);
   };
   gridArea.children().addClass("square-grid-4x4");
+  $("#help-icon").hide();
   initialAnimation();
   textAreaRevision();
 };
@@ -623,6 +629,12 @@ $(sndThemeSong).on("ended", function () {
   soundHandler();
 })
 
+/** Enables sndPlayerAnswer to be looped (i.e. replayed once the sound ends) */
+$(sndPlayerAnswer).on("ended", function () {
+  this.currentTime = 0;
+  soundHandler();
+})
+
 /**
  * Provides visual feedback to the user that the page title is not clickable
  * when the in-stage timer is counting down
@@ -678,33 +690,49 @@ $("#replay").on("click", function() {
 
 /** Hides some elements of the DOM and displays the game instructions when the user clicks "How to Play" */
 $("#how-to").on("click", function() {
-  $("#squares-container").hide();
-  $("#bottom-text-container").hide();
+  $(gridArea).hide();
+  $(textArea).hide();
   $("#help-exit").hide();
   $("#instructions-container").fadeTo(400, 1, function() {
     $(this).show();
   });
 });
 
-/** Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon */
-$("#help-icon").on("click", function() {
-  $("#squares-container").hide();
-  $("#bottom-text-container").hide();
-  $("#help-exit").show();
-  $("#instructions-container").fadeTo(400, 1, function() {
-    $(this).show();
-  });
+/** 
+ * Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon.
+ * Has the reverse effect if the game instructions are already visible.
+ */
+$("#help-icon").on("click", function () {
+  if ($("#instructions-container").is(":hidden") && $("#squares-container").css("opacity") === "1") {
+    $(gridArea).hide();
+    $(textArea).hide();
+    $("#help-exit").show();
+    $("#instructions-container").fadeTo(400, 1, function () {
+      $(this).show();
+      $("#help-icon").focus();
+    });
+  } else if (!$("#instructions-container").is(":hidden") && $("#instructions-container").css("opacity") === "1") {
+    $("#instructions-container").hide();
+    $(gridArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+    $(textArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+  }
 });
 
 /** Hides the game instructions and restores the game elements of the DOM when the user clicks "Return to Game" */
-$("#help-close").on("click", function() {
-  $("#instructions-container").hide();
-  $("#squares-container").fadeTo(400, 1, function() {
-    $(this).show();
-  });
-  $("#bottom-text-container").fadeTo(400, 1, function() {
-    $(this).show();
-  });
+$("#help-close").on("click", function () {
+  if (!$("#instructions-container").is(":hidden") && $("#instructions-container").css("opacity") === "1") {
+    $("#instructions-container").hide();
+    $(gridArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+    $(textArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+  }
 });
 
 /** Hides the game instructions and returns to the initial page display when the user clicks "Return to Game" */
@@ -712,20 +740,20 @@ $("#help-exit").on("click", function () {
   if (game.stage != 0) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
       $("#instructions-container").hide();
-      $("#squares-container").fadeTo(400, 1, function () {
+      $(gridArea).fadeTo(400, 1, function () {
         $(this).show();
       });
-      $("#bottom-text-container").fadeTo(400, 1, function () {
+      $(textArea).fadeTo(400, 1, function () {
         $(this).show();
       });
       returnToInitial();
     };
   } else {
     $("#instructions-container").hide();
-    $("#squares-container").fadeTo(400, 1, function () {
+    $(gridArea).fadeTo(400, 1, function () {
       $(this).show();
     });
-    $("#bottom-text-container").fadeTo(400, 1, function () {
+    $(textArea).fadeTo(400, 1, function () {
       $(this).show();
     });
   };
@@ -740,15 +768,10 @@ $(document).on("keyup", function (event) {
   };
 });
 
-/** Calls the soundHandler function when the user clicks the "mute-toggle" checkbox */
-$("#mute-toggle").on("click", function () {
+/** Calls the soundHandler function when the "mute-toggle" checkbox is toggled */
+$("#mute-toggle").on("change", function() {
   soundHandler();
-});
-
-/** Simulates a mouse click of the "mute-toggle" checkbox when the user clicks the "mute-toggle-label" icon */
-$("#mute-toggle-label").on("click", function () {
-  $("#mute-toggle").click();
-});
+})
 
 /** Calls the checkWindowHeight function when the window is resized */
 $(window).on("resize", function() {
