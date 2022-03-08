@@ -7,8 +7,11 @@ $(document).ready(function(){
 
 /* TO DO:
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
+    - FIX SIGMA ISSUE ON MOBILE
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
+
+    - SOUNDS FIXED APART FROM CORRECT ANSWER STILL SOUNDING WHEN MUTE BUTTON IS PRESSED
 */
 
 // Sound variables section begins here
@@ -33,8 +36,8 @@ var game = {
   status: "incomplete",
   display: "",
   stage: 0,
-  timer: {sec: 5, mSec: "000"},
-  clock: 3,
+  timer: {sec: 5, mSec: "000", status: "inactive"},
+  clock: {sec: 3, status: "inactive"},
   redSquares: 0,
   greenSquares: 0,
   currentSounds: []
@@ -43,7 +46,7 @@ var game = {
 
 // Functions begin here
 function checkWindowHeight() {
-  if ($(window).width() < 769 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
+  if ($(window).width() < 1023 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
     $("#game-area-container").hide();
     $(textArea).hide();
     $("#help-icon").hide();
@@ -115,15 +118,34 @@ function initialAnimation() {
   }, 800);
 };
 
+
 function soundSwitch(newSound) {
-  let fromSound = game.currentSounds[0];
-  if (!$(fromSound).attr("src").includes("correct-answer")) {
-    fromSound.pause();
-    fromSound.currentTime = 0;
+  for (let i = 0; i < game.currentSounds.length; i++) {
+    let fromSound = game.currentSounds[i];
+    if (!$(fromSound).attr("src").includes("correct-answer")) {
+      fromSound.pause();
+      fromSound.currentTime = 0;
+    }
   }
   game.currentSounds = [newSound];
   soundHandler();
 }
+
+function soundHandler() {
+  if ($("#mute-toggle").is(":checked")) {
+    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
+    $(".clickable").attr("tabindex", "0");
+    for (let i = 0; i < game.currentSounds.length; i++) {
+      game.currentSounds[i].pause();
+    }
+  } else {
+    $("#mute-toggle-label").html("<i class='fas fa-volume-up clickable'></i>");
+    $(".clickable").attr("tabindex", "0");
+    for (let i = 0; i < game.currentSounds.length; i++) {
+      game.currentSounds[i].play();
+    }
+  };
+};
 
 /**
  * Runs when the player clicks "Play Game", which begins Stage 1 of the game and calls another function
@@ -139,24 +161,9 @@ function startGame() {
   $("#help-icon").show();
 };
 
-function nextStage() {
-  game.stage++;
-  game.clock = 3;  
-  $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`); 
-  $("#player-start-input").remove();
-  if (game.stage <= 14) {
-    gridDisplayUpdate();
-    stageBegin();
-  } else {
-    console.log("Game completed");
-    gameCompleted();
-  };
-};
-
 function stageBegin() {
   $("#continue").hide();
   $("#timer").show();
-  console.log(`Stage ${game.stage} Started`);
   $("#timer").html(timerText(game.timer.sec, game.timer.mSec));
   gridArea.children().addClass("gray-square");
   $(gridArea).append(`
@@ -176,19 +183,20 @@ function stageBegin() {
  * prior to the stage being in-play.
  */
 function countdown() {
-  console.log("countdown() called");
+  game.clock.status = "active";
   $("#go").remove();
   $("#player-start-input > p").empty();
-  $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock}`);
+  $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock.sec}`);
   let count = setInterval(function () {
     if (game.display === "active") { //Ensures the timer only reduces when the game area is visible
-      game.clock -= 1;
+      game.clock.sec -= 1;
       $("#center-nums").empty();
-      $("#center-nums").html(`${game.clock}`);
+      $("#center-nums").html(`${game.clock.sec}`);
       console.log("time logged");
-      if (game.clock < 1) {
+      if (game.clock.sec < 1) {
         clearInterval(count);
         stageInPlay();
+        game.clock.sec = 3;
       };
     }
   }, 1000);
@@ -201,12 +209,11 @@ function countdown() {
  * then calls the stageSetup function
  */
 function stageInPlay() {
+  game.clock.status = "inactive";
   game.redSquares = 0;
   game.greenSquares = 0;
-  console.log("Game in play");
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
-  console.log("stageInPlay finished");
   stageSetup();
 };
 
@@ -267,12 +274,11 @@ function stageSetup() {
     shuffleArray(stageGreenSquareOptions);
     game.greenSquares = stageGreenSquareOptions[0];
   };
-  console.log("stageSetup finished");
 };
 
 /**
- * Applies the number of red squares to the grid according to the
- * game.redSquares value.
+ * Applies the number of red or green squares to the grid according to the
+ * game object values.
  */
 function stageApplyColoredSquares() {  
   squaresArray = $(".square");
@@ -287,55 +293,11 @@ function stageApplyColoredSquares() {
 };
 
 /**
- * Runs when the player has successfully passed the final stage.
- * Applies DOM changes to signify that the game has been completed.
- */
-function gameCompleted() {
-  game.status = "completed";
-  $("#player-start-input").empty().html("CONGRATULATIONS!<br>You beat the game!");
-  $("#timer").hide();
-  $("#exit").show();
-  $("#stage-number").hide();
-  $("#replay").show();
-  finalAnimation();
-};
-
-/**
- * Displays an animation if the player completes the final stage
- */
-function finalAnimation() {
-  soundSwitch(sndGameCompleted);
-  let squaresArray = $(".square");
-  squaresArray.addClass("green-square");
-  let animation = setInterval(function () {
-    squaresArray.fadeTo(500, 0.1, function () {});
-    squaresArray.fadeTo(500, 1, function () {});
-    if (game.status !== "completed") {
-      $(squaresArray).removeClass("green-square");
-      clearInterval(animation);
-    };
-  });
-};
-
-/**
-Returns the layout and values of the game timer when the correct arguments are provided 
-*/
-function timerText(sec, mSec) { 
-  return `
-    <div>
-      &nbsp;Time Remaining:&nbsp;
-    </div>
-    <div>
-    ${sec}.${mSec}&nbsp;
-    </div>
-  `
-};
-
-/**
- * Begins the countdown of the in-play time limit.
+ * Handles the countdown of the in-play time limit.
  */
 function stageTimer() {
   soundSwitch(sndTimerActive);
+  game.timer.status = "active";
   let decrease = setInterval(function () {
     if (game.display === "active") { //Ensures the timer only reduces when the game area is visible
       if (parseInt(game.timer.mSec) > 0) {
@@ -359,9 +321,8 @@ function stageTimer() {
  * Displays an area for the player to input their answer for each stage.
  */
 function stageEnd() {
-  console.log("stage ended");
   soundSwitch(sndPlayerAnswer);
-  game.timer = {sec: 5, mSec: "000"};
+  game.timer = {sec: 5, mSec: "000", status: "inactive"};
   $(".square").removeClass("red-square green-square").addClass("gray-square");
   $(gridArea).append(`
     <div id="player-start-input">
@@ -416,11 +377,11 @@ function playerCorrect() {
     window.alert("An error has occured. The game will now exit.");
     returnToInitial();
   };
+  game.currentSounds.splice(sndRightAnswer);
 };
 
 function playerIncorrect() {
   soundSwitch(sndWrongAnswer);
-  console.log("Player answered incorrectly!");
   squaresArray.removeClass("gray-square").addClass("red-square");
   $("#player-start-input").empty().html(`You got it wrong!<br>You reached<br>Stage ${game.stage}`)
   $("#timer").hide();
@@ -429,63 +390,17 @@ function playerIncorrect() {
   $("#exit").show();
 };
 
-/**
- * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
- * to the either:
- *  - the text viewed when the game is in play; or
- *  - the intial values if the player has decided to return to the landing screen.
- */
-function textAreaRevision() {  
+function nextStage() {
+  game.stage++;
+  game.clock.sec === 3;  
+  $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`); 
   $("#player-start-input").remove();
-  if (game.stage == 1) {
-    $("#start").hide();
-    $("#how-to").hide();
-    $("#restart").hide();
-    $("#exit").hide();
-    $("#timer").show();
-    $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
-    $("#stage-number").show();
-    $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`);   
-    console.log("textAreaRevision() - text below grid revised");
+  if (game.stage <= 14) {
+    gridDisplayUpdate();
+    stageBegin();
   } else {
-    $("#start").show();
-    $("#how-to").show();
-    $("#timer").hide();
-    $("#restart").hide();
-    $("#exit").hide();
-    $("#stage-number").hide();
-    $("#replay").hide();
-    console.log("textAreaRevision() - text reset to initial values");
+    gameCompleted();
   };
-};
-
-/**
- * Resets the screen to the initial layout when the user chooses to exit the game.
- */
-function returnToInitial() {
-  soundSwitch(sndThemeSong);
-  game = {
-    status: "incomplete",
-    display: "",
-    stage: 0,
-    timer: {
-      sec: 5,
-      mSec: "000"
-    },
-    clock: 3,
-    redSquares: 0,
-    greenSquares: 0,
-    currentSounds: [sndThemeSong]
-  };  
-  checkWindowHeight();
-  gridArea.empty();
-  for (let i = 0; i < 16; i++) {
-    gridArea.append(singleSquareHTML);
-  };
-  gridArea.children().addClass("square-grid-4x4");
-  $("#help-icon").hide();
-  initialAnimation();
-  textAreaRevision();
 };
 
 /**
@@ -599,21 +514,112 @@ function gridDisplayUpdate() {
   };
 };
 
-function soundHandler() {
-  if ($("#mute-toggle").is(":checked")) {
-    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
-    $(".clickable").attr("tabindex", "0");
-    for (let i = 0; i < game.currentSounds.length; i++) {
-      game.currentSounds[i].pause();
-    }
+/**
+ * Runs when the player has successfully passed the final stage.
+ * Applies DOM changes to signify that the game has been completed.
+ */
+function gameCompleted() {
+  game.status = "completed";
+  $("#player-start-input").empty().html("CONGRATULATIONS!<br>You beat the game!");
+  $("#timer").hide();
+  $("#exit").show();
+  $("#stage-number").hide();
+  $("#replay").show();
+  finalAnimation();
+};
+
+/**
+ * Displays an animation if the player completes the final stage
+ */
+function finalAnimation() {
+  soundSwitch(sndGameCompleted);
+  let squaresArray = $(".square");
+  squaresArray.addClass("green-square");
+  let animation = setInterval(function () {
+    squaresArray.fadeTo(500, 0.1, function () {});
+    squaresArray.fadeTo(500, 1, function () {});
+    if (game.status !== "completed") {
+      $(squaresArray).removeClass("green-square");
+      clearInterval(animation);
+    };
+  });
+};
+
+/**
+Returns the layout and values of the game timer when the correct arguments are provided 
+*/
+function timerText(sec, mSec) { 
+  return `
+    <div>
+      &nbsp;Time Remaining:&nbsp;
+    </div>
+    <div>
+      ${sec}.${mSec}
+    </div>
+  `
+};
+
+/**
+ * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
+ * to the either:
+ *  - the text viewed when the game is in play (once the game begins); or
+ *  - the intial values if the player has decided to return to the landing screen.
+ */
+function textAreaRevision() {  
+  $("#player-start-input").remove();
+  if (game.stage === 1) {
+    $("#start").hide();
+    $("#how-to").hide();
+    $("#restart").hide();
+    $("#exit").hide();
+    $("#timer").show();
+    $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
+    $("#stage-number").show();
+    $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`);
   } else {
-    $("#mute-toggle-label").html("<i class='fas fa-volume-up clickable'></i>");
-    $(".clickable").attr("tabindex", "0");
-    for (let i = 0; i < game.currentSounds.length; i++) {
-      game.currentSounds[i].play();
-    }
+    $("#start").show();
+    $("#how-to").show();
+    $("#timer").hide();
+    $("#restart").hide();
+    $("#exit").hide();
+    $("#stage-number").hide();
+    $("#replay").hide();
   };
 };
+
+/**
+ * Resets the screen to the initial layout when the user chooses to exit the game.
+ */
+function returnToInitial() {
+  soundSwitch(sndThemeSong);
+  game = {
+    status: "incomplete",
+    display: "",
+    stage: 0,
+    timer: {
+      sec: 5,
+      mSec: "000",
+      status: "inactive"
+    },
+    clock: {
+      sec: 3,
+      status: "inactive"
+    }, 
+    redSquares: 0,
+    greenSquares: 0,
+    currentSounds: [sndThemeSong]
+  };  
+  checkWindowHeight();
+  gridArea.empty();
+  for (let i = 0; i < 16; i++) {
+    gridArea.append(singleSquareHTML);
+  };
+  gridArea.children().addClass("square-grid-4x4");
+  $("#help-icon").hide();
+  initialAnimation();
+  textAreaRevision();
+};
+
 // Functions end here
 
 // Event handlers begin here
@@ -637,10 +643,10 @@ $(sndPlayerAnswer).on("ended", function () {
 
 /**
  * Provides visual feedback to the user that the page title is not clickable
- * when the in-stage timer is counting down
+ * when either the in-stage timer or pre-stage countdown is active
  */
 $("#page-title").on("mouseenter", (function () {
-  if (game.timer.sec < 5) {
+  if (game.timer.status === "active" || game.clock.status === "active") {
     $(this).removeClass("clickable").addClass("unclickable");
   } else {
     $(this).removeClass("unclickable").addClass("clickable");
@@ -653,11 +659,47 @@ $("#page-title").on("mouseenter", (function () {
  * This prevents accidental loss of game progress.
  */
 $("#page-title").on("click", function () {
-  if (game.stage != 0 && game.timer.sec == 5) {
-    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
+  if (game.stage != 0 && game.timer.sec === 5) {
+    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") === true) {
       returnToInitial();
     };
   };
+});
+
+/**
+ * Provides visual feedback to the user that the page title is not clickable
+ * when either the in-stage timer or pre-stage countdown is active
+ */
+$("#help-icon").on("mouseenter", function () {
+  if (game.timer.status === "active" || game.clock.status === "active") {
+    $(this).children("i").removeClass("clickable").addClass("unclickable");
+  } else {
+    $(this).children("i").removeClass("unclickable").addClass("clickable");
+  };
+});
+
+/** 
+ * Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon.
+ * Has the reverse effect if the game instructions are already visible.
+ */
+$("#help-icon").on("click", function () {
+  if ($("#instructions-container").is(":hidden") && $("#squares-container").css("opacity") === "1" && game.timer.status !== "active" && game.clock.status !== "active") {
+    $(gridArea).hide();
+    $(textArea).hide();
+    $("#help-exit").show();
+    $("#instructions-container").fadeTo(400, 1, function () {
+      $(this).show();
+      $("#help-icon").focus();
+    });
+  } else if (!$("#instructions-container").is(":hidden") && $("#instructions-container").css("opacity") === "1") {
+    $("#instructions-container").hide();
+    $(gridArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+    $(textArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+  }
 });
 
 /** Starts the game when the user clicks "Play Game" */
@@ -698,30 +740,6 @@ $("#how-to").on("click", function() {
   });
 });
 
-/** 
- * Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon.
- * Has the reverse effect if the game instructions are already visible.
- */
-$("#help-icon").on("click", function () {
-  if ($("#instructions-container").is(":hidden") && $("#squares-container").css("opacity") === "1") {
-    $(gridArea).hide();
-    $(textArea).hide();
-    $("#help-exit").show();
-    $("#instructions-container").fadeTo(400, 1, function () {
-      $(this).show();
-      $("#help-icon").focus();
-    });
-  } else if (!$("#instructions-container").is(":hidden") && $("#instructions-container").css("opacity") === "1") {
-    $("#instructions-container").hide();
-    $(gridArea).fadeTo(400, 1, function () {
-      $(this).show();
-    });
-    $(textArea).fadeTo(400, 1, function () {
-      $(this).show();
-    });
-  }
-});
-
 /** Hides the game instructions and restores the game elements of the DOM when the user clicks "Return to Game" */
 $("#help-close").on("click", function () {
   if (!$("#instructions-container").is(":hidden") && $("#instructions-container").css("opacity") === "1") {
@@ -737,7 +755,7 @@ $("#help-close").on("click", function () {
 
 /** Hides the game instructions and returns to the initial page display when the user clicks "Return to Game" */
 $("#help-exit").on("click", function () {
-  if (game.stage != 0) {
+  if (game.stage > 1 || (game.stage === 1 && game.redSquares !== 0)) {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
       $("#instructions-container").hide();
       $(gridArea).fadeTo(400, 1, function () {
@@ -748,6 +766,15 @@ $("#help-exit").on("click", function () {
       });
       returnToInitial();
     };
+  } else if (game.stage === 1 && game.redSquares === 0) {
+    $("#instructions-container").hide();
+    $(gridArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+    $(textArea).fadeTo(400, 1, function () {
+      $(this).show();
+    });
+    returnToInitial();
   } else {
     $("#instructions-container").hide();
     $(gridArea).fadeTo(400, 1, function () {

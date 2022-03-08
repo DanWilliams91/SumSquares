@@ -9,11 +9,11 @@
 body {
   font-family: "Nova Square", cursive;
   color: red;
-  background-image: url("../images/bg-img-grey.png");
+  background-image: url("../images/bg-img-grey.png");  
+  background-position: center;
   margin: 1em 0.5em;
   width: calc(var(--max-width));
   height: calc(var(--max-height));
-  overflow: hidden;
   display: grid;
   align-content: center;
 }
@@ -177,18 +177,19 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #mute-toggle-label {
-position: absolute;
-left: 1vw;
-top: 1vw;
-margin-top: 0.25rem;
-  
+  position: absolute;
+  left: 1vw;
+  top: 1vw;
+  margin-top: 0.25rem;
+  font-size: 2em; 
 }
 
 #help-icon {
-position: absolute;
-right: 1vw;
-top: 1vw;
-margin-top: 0.25rem;
+  position: absolute;
+  right: 1vw;
+  top: 1vw;
+  margin-top: 0.25rem;
+  font-size: 2em; 
 }
 
 #instructions-container {
@@ -274,19 +275,21 @@ margin-top: 0.25rem;
 }
 
 /* CLASS TO BE ADDED FOR THESE */
-#start,
+/* #start,
 #timer,
 #exit,
 #continue,
-#restart {
+#restart */
+.menu-top {
   font-size: 1.5em;
   margin: 0 auto;
 }
 
 /* CLASS TO BE ADDED FOR THESE */
-#how-to,
+/* #how-to,
 #stage-number,
-#replay {
+#replay */
+.menu-btm {
   font-size: 1em;
   margin: 0;
 }
@@ -304,21 +307,23 @@ margin-top: 0.25rem;
   }
 
   /* CLASS TO BE ADDED FOR THESE */
-  #start,
+  /* #start,
   #timer,
   #exit,
   #continue,
-  #restart {
-  font-size: 2.5em;
-  margin: 0 auto;
+  #restart */
+  .menu-top {
+    font-size: 2.5em;
+    margin: 0 auto;
   }
 
   /* CLASS TO BE ADDED FOR THESE */
-  #how-to,
+  /* #how-to,
   #stage-number,
-  #replay {
-    font-size: 2em;
-    margin: 0;
+  #replay */
+  .menu-btm {
+      font-size: 2em;
+      margin: 0;
   }
 
 }
@@ -338,8 +343,8 @@ margin-top: 0.25rem;
 
 @media screen and (min-width: 1441px) {
 
-  #player-start-input {
+  /* #player-start-input {
     font-size: 2.5em;
-  }
+  } */
 
 }
