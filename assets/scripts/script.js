@@ -10,8 +10,6 @@ $(document).ready(function(){
     - FIX SIGMA ISSUE ON MOBILE
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
-
-    - SOUNDS FIXED APART FROM CORRECT ANSWER STILL SOUNDING WHEN MUTE BUTTON IS PRESSED
 */
 
 // Sound variables section begins here
@@ -32,8 +30,9 @@ const singleSquareHTML = `<div class="square"></div>`;
 // Constant variables, used in multiple functions, end here
 
 // Game object starts here
-var game = {
-  status: "incomplete",
+let game = {
+  status: "waiting",
+  progress: "incomplete",
   display: "",
   stage: 0,
   timer: {sec: 5, mSec: "000", status: "inactive"},
@@ -45,6 +44,7 @@ var game = {
 // Game object ends here
 
 // Functions begin here
+
 function checkWindowHeight() {
   if ($(window).width() < 1023 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
     $("#game-area-container").hide();
@@ -64,6 +64,7 @@ function checkWindowHeight() {
   }
 };
 
+
 /**
  * Removes the class "hidden" from selected elements and hides those elements.
  * The purpose of this is for JavaScript to take over the element hiding from CSS.
@@ -81,19 +82,21 @@ function initialElementHiding() {
   $("#replay").hide().removeClass("hidden");
 };
 
+
 /**
  * Shuffles an array which is passed as the argument, then returns the shuffled array 
  */
 // Array shuffling function method taken from https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
 function shuffleArray(array) {
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = array[i];
     array[i] = array[j];
     array[j] = temp;
   };
   return array;
 };
+
 
 /**
  * Iterates through the existing squares on the page and highlights random
@@ -102,7 +105,6 @@ function shuffleArray(array) {
 function initialAnimation() {
   game.currentSounds = [sndThemeSong];
   let animation = setInterval(function () {
-    console.log("initial animation iteration run");
     let squaresArray = $(".square");
     shuffleArray(squaresArray);
     for(let i = 0; i < 4; i++) {
@@ -125,11 +127,13 @@ function soundSwitch(newSound) {
     if (!$(fromSound).attr("src").includes("correct-answer")) {
       fromSound.pause();
       fromSound.currentTime = 0;
+      game.currentSounds.splice(i, 1);
     }
   }
-  game.currentSounds = [newSound];
+  game.currentSounds.push(newSound);
   soundHandler();
 }
+
 
 function soundHandler() {
   if ($("#mute-toggle").is(":checked")) {
@@ -147,12 +151,13 @@ function soundHandler() {
   };
 };
 
+
 /**
  * Runs when the player clicks "Play Game", which begins Stage 1 of the game and calls another function
  * to revise the text below the grid
  */
 function startGame() {
-  console.log("startGame() running - player clicked 'Play Game'");
+  game.status = "in-play";
   soundSwitch(sndStageReady);
   game.stage = 1;
   textAreaRevision();
@@ -160,6 +165,7 @@ function startGame() {
   stageBegin();
   $("#help-icon").show();
 };
+
 
 function stageBegin() {
   $("#continue").hide();
@@ -173,10 +179,10 @@ function stageBegin() {
     </div>`);
   soundSwitch(sndStageReady);
   $("#go").focus().on("click", function () {
-    console.log("'GO' CLICKED");
     countdown();
   });
 };
+
 
 /**
  * Counts down in 1s increments and inserts the numbers 3, 2 and 1 into the game area
@@ -188,20 +194,22 @@ function countdown() {
   $("#player-start-input > p").empty();
   $("#player-start-input > p").attr("id", "center-nums").html(`${game.clock.sec}`);
   let count = setInterval(function () {
-    if (game.display === "active") { //Ensures the timer only reduces when the game area is visible
+    if (game.display === "active") {
       game.clock.sec -= 1;
       $("#center-nums").empty();
       $("#center-nums").html(`${game.clock.sec}`);
-      console.log("time logged");
       if (game.clock.sec < 1) {
         clearInterval(count);
-        stageInPlay();
         game.clock.sec = 3;
+        if (game.status === "in-play") {
+          stageInPlay();
+        }
       };
     }
   }, 1000);
   soundSwitch(sndStageCountdown);
 };
+
 
 /**
  * Resets the game's redSquares and greenSquares values to 0,
@@ -216,6 +224,7 @@ function stageInPlay() {
   gridArea.children().removeClass("gray-square");
   stageSetup();
 };
+
 
 /**
  * Calculates the number of red and/or green squares for the current stage.
@@ -234,14 +243,15 @@ function stageSetup() {
     gameCompleted();
   };
 
+
   /**
     * Calculates the number of red squares for the current stage.
     * Assigns a random value to the redSquares game key.
     */
   function setRedSquares() {
-    var stageRedSquareOptions = [];
-    var minRedSquares;
-    var maxRedSquares;
+    let stageRedSquareOptions = [];
+    let minRedSquares;
+    let maxRedSquares;
     switch (game.stage) {
       case 1:
       case 2:
@@ -260,12 +270,13 @@ function stageSetup() {
     game.redSquares = stageRedSquareOptions[0];
   };
 
+
   /**
     * Calculates the number of green squares for the current stage.
     * Assigns a random value to the greenSquares game key.
     */
   function setGreenSquares() {
-    var stageGreenSquareOptions = [];
+    let stageGreenSquareOptions = [];
     let minGreenSquares = Math.round(stageDifficulty * 6);
     let maxGreenSquares = Math.round(stageDifficulty * 6.5);
     for (let i = minGreenSquares; i <= maxGreenSquares; i++) {
@@ -275,6 +286,7 @@ function stageSetup() {
     game.greenSquares = stageGreenSquareOptions[0];
   };
 };
+
 
 /**
  * Applies the number of red or green squares to the grid according to the
@@ -291,6 +303,7 @@ function stageApplyColoredSquares() {
     $(squaresArray[i]).addClass("red-square");
   };
 };
+
 
 /**
  * Handles the countdown of the in-play time limit.
@@ -316,6 +329,7 @@ function stageTimer() {
     }
   }, 5);
 };
+
 
 /**
  * Displays an area for the player to input their answer for each stage.
@@ -349,12 +363,12 @@ function stageEnd() {
   });
 };
 
+
 /**
  * Checks the player's inputted answer against the correct answer stored in
  * the redSquares key of game.
  */
 function checkAnswer() {
-  console.log("Checking answer...")
   let playerAnswer = parseInt(document.getElementById("player-answer").value);
   if (playerAnswer === game.redSquares) {
     playerCorrect()
@@ -363,6 +377,7 @@ function checkAnswer() {
   }
 };
 
+
 function playerCorrect() {
   if (game.stage < 14) {
     squaresArray.removeClass("gray-square red-square").addClass("green-square");
@@ -370,15 +385,14 @@ function playerCorrect() {
     $("#timer").hide();
     $("#continue").show();
     soundSwitch(sndRightAnswer);
-  } else if (game.stage = 14) {
+  } else if (game.stage === 14) {
     gameCompleted();
-  } else {    
-    console.log("Error in playerCorrect function");
+  } else {
     window.alert("An error has occured. The game will now exit.");
     returnToInitial();
   };
-  game.currentSounds.splice(sndRightAnswer);
 };
+
 
 function playerIncorrect() {
   soundSwitch(sndWrongAnswer);
@@ -389,6 +403,7 @@ function playerIncorrect() {
   $("#restart").show();
   $("#exit").show();
 };
+
 
 function nextStage() {
   game.stage++;
@@ -402,6 +417,7 @@ function nextStage() {
     gameCompleted();
   };
 };
+
 
 /**
  * Checks the current game stage and adds the relevant number of squares to the grid
@@ -508,18 +524,18 @@ function gridDisplayUpdate() {
       gridArea.children().addClass("square-grid-20x20");
       break;
     default:
-      console.log("Error in gridDisplayUpdate() function");
       window.alert("An error has occured. The game will now exit.");
       returnToInitial();
   };
 };
+
 
 /**
  * Runs when the player has successfully passed the final stage.
  * Applies DOM changes to signify that the game has been completed.
  */
 function gameCompleted() {
-  game.status = "completed";
+  game.progress = "completed";
   $("#player-start-input").empty().html("CONGRATULATIONS!<br>You beat the game!");
   $("#timer").hide();
   $("#exit").show();
@@ -527,6 +543,7 @@ function gameCompleted() {
   $("#replay").show();
   finalAnimation();
 };
+
 
 /**
  * Displays an animation if the player completes the final stage
@@ -538,12 +555,13 @@ function finalAnimation() {
   let animation = setInterval(function () {
     squaresArray.fadeTo(500, 0.1, function () {});
     squaresArray.fadeTo(500, 1, function () {});
-    if (game.status !== "completed") {
+    if (game.progress !== "completed") {
       $(squaresArray).removeClass("green-square");
       clearInterval(animation);
     };
   });
 };
+
 
 /**
 Returns the layout and values of the game timer when the correct arguments are provided 
@@ -558,6 +576,7 @@ function timerText(sec, mSec) {
     </div>
   `
 };
+
 
 /**
  * Changes the IDs of the paragraphs in the textArea and changes their inner HTML
@@ -587,6 +606,7 @@ function textAreaRevision() {
   };
 };
 
+
 /**
  * Resets the screen to the initial layout when the user chooses to exit the game.
  */
@@ -615,7 +635,7 @@ function returnToInitial() {
     gridArea.append(singleSquareHTML);
   };
   gridArea.children().addClass("square-grid-4x4");
-  $("#help-icon").hide();
+  initialElementHiding();
   initialAnimation();
   textAreaRevision();
 };
@@ -623,11 +643,13 @@ function returnToInitial() {
 // Functions end here
 
 // Event handlers begin here
+
 /** Enables sndStageReady to be looped (i.e. replayed once the sound ends) */
 $(sndStageReady).on("ended", function () {
   this.currentTime = 0;
   soundHandler();
 })
+
 
 /** Enables sndThemeSong to be looped (i.e. replayed once the sound ends) */
 $(sndThemeSong).on("ended", function () {
@@ -635,11 +657,13 @@ $(sndThemeSong).on("ended", function () {
   soundHandler();
 })
 
+
 /** Enables sndPlayerAnswer to be looped (i.e. replayed once the sound ends) */
 $(sndPlayerAnswer).on("ended", function () {
   this.currentTime = 0;
   soundHandler();
 })
+
 
 /**
  * Provides visual feedback to the user that the page title is not clickable
@@ -652,6 +676,7 @@ $("#page-title").on("mouseenter", (function () {
     $(this).removeClass("unclickable").addClass("clickable");
   };
 }));
+
 
 /**
  * Allows the user to confirm if they want to reset the game when they click
@@ -666,6 +691,7 @@ $("#page-title").on("click", function () {
   };
 });
 
+
 /**
  * Provides visual feedback to the user that the page title is not clickable
  * when either the in-stage timer or pre-stage countdown is active
@@ -677,6 +703,7 @@ $("#help-icon").on("mouseenter", function () {
     $(this).children("i").removeClass("unclickable").addClass("clickable");
   };
 });
+
 
 /** 
  * Hides some elements of the DOM and displays the game instructions when the user clicks the "?" icon.
@@ -702,10 +729,12 @@ $("#help-icon").on("click", function () {
   }
 });
 
+
 /** Starts the game when the user clicks "Play Game" */
 $("#start").on("click", function() {
   startGame();
 });
+
 
 /** Returns to the initial page when the user clicks "Restart" */
 $("#restart").on("click", function() {
@@ -713,10 +742,12 @@ $("#restart").on("click", function() {
   startGame();
 });
 
+
 /** Returns to the initial page when the user clicks "Exit" */
 $("#exit").on("click", function() {
   returnToInitial();
 });
+
 
 /** Progresses to the next stage when the user clicks "Click Here to Continue" */
 $("#continue").on("click", function() {
@@ -724,11 +755,13 @@ $("#continue").on("click", function() {
   $(".square").removeClass("green-square");
 });
 
+
 /** Returns to the initial page and automatically starts a new game when the user clicks "Play Again" */
 $("#replay").on("click", function() {
   returnToInitial();
   startGame();
 });
+
 
 /** Hides some elements of the DOM and displays the game instructions when the user clicks "How to Play" */
 $("#how-to").on("click", function() {
@@ -739,6 +772,7 @@ $("#how-to").on("click", function() {
     $(this).show();
   });
 });
+
 
 /** Hides the game instructions and restores the game elements of the DOM when the user clicks "Return to Game" */
 $("#help-close").on("click", function () {
@@ -752,6 +786,7 @@ $("#help-close").on("click", function () {
     });
   }
 });
+
 
 /** Hides the game instructions and returns to the initial page display when the user clicks "Return to Game" */
 $("#help-exit").on("click", function () {
@@ -786,6 +821,7 @@ $("#help-exit").on("click", function () {
   };
 });
 
+
 /** Simulates a mouse click when the user clicks the "enter" or "space" keyboard keys*/
 $(document).on("keyup", function (event) {
   if ($(":focus").attr("id") !== "go") {
@@ -795,15 +831,35 @@ $(document).on("keyup", function (event) {
   };
 });
 
-/** Calls the soundHandler function when the "mute-toggle" checkbox is toggled */
-$("#mute-toggle").on("change", function() {
+
+/** Calls the soundHandler function when the "mute-toggle" checkbox is toggled,
+ * or removes the current sound from the game if it's a sound which isn't
+ * considered background music
+ */
+$("#mute-toggle").on("change", function () {
+  for (let i = 0; i < game.currentSounds.length; i++) {
+    switch (game.currentSounds[i]) {
+      case sndThemeSong:
+      case sndStageReady:
+      case sndPlayerAnswer:
+        game.currentSounds[i].pause();
+        break;
+      default:
+        game.currentSounds[i].pause();
+        game.currentSounds[i].currentTime = 0;
+        game.currentSounds.splice(i, 1);
+        break;
+    };
+  };
   soundHandler();
-})
+});
+
 
 /** Calls the checkWindowHeight function when the window is resized */
 $(window).on("resize", function() {
     checkWindowHeight();
 });
+
 //Event handlers end here
 
 module.exports = { game, initialAnimation, startGame, textAreaRevision, gridDisplayUpdate, nextStage };
