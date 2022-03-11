@@ -7,7 +7,6 @@ $(document).ready(function(){
 
 /* TO DO:
     - STYLING OF ELEMENTS (START WITH INPUT AND BUTTON)
-    - FIX SIGMA ISSUE ON MOBILE
     - RESPONSIVE STYLING
     - INSERT DESCRIPTIONS FOR ALL FUNCTIONS IN JS FILE
 */
@@ -35,8 +34,15 @@ let game = {
   progress: "incomplete",
   display: "",
   stage: 0,
-  timer: {sec: 5, mSec: "000", status: "inactive"},
-  clock: {sec: 3, status: "inactive"},
+  timer: {
+    sec: 5,
+    mSec: "000",
+    status: "inactive"
+  },
+  clock: {
+    sec: 3,
+    status:"inactive"
+  },
   redSquares: 0,
   greenSquares: 0,
   currentSounds: []
@@ -47,13 +53,21 @@ let game = {
 
 function checkWindowHeight() {
   if ($(window).width() < 1023 && $(window).height() <= 500 && $(window).width() > $(window).height()) {
+    windowInsufficient();
+  } else {
+    windowSufficient();
+  }
+  sigmaRevision();
+
+  function windowInsufficient() {
     $("#game-area-container").hide();
     $(textArea).hide();
     $("#help-icon").hide();
     $("#game-rotate-container").show();
     game.display = "hidden";
+  }
 
-  } else {
+  function windowSufficient() {
     $("#game-area-container").show();
     $(textArea).show();
     if (game.stage !== 0) {
@@ -62,7 +76,16 @@ function checkWindowHeight() {
     $("#game-rotate-container").hide();
     game.display = "active";
   }
-};
+
+  function sigmaRevision() {
+    if ($(window).width() < 1023) {
+      $("#sigma").css("font-size", "1em").html("e");
+    } else {
+      // $("#sigma").css("font-size", "0.75em");
+      $("#sigma").css("font-size", "0.75em").html("&#931;");
+    }
+  }
+}
 
 
 /**
@@ -80,7 +103,7 @@ function initialElementHiding() {
   $("#continue").hide().removeClass("hidden");
   $("#stage-number").hide().removeClass("hidden");
   $("#replay").hide().removeClass("hidden");
-};
+}
 
 
 /**
@@ -93,9 +116,9 @@ function shuffleArray(array) {
     let temp = array[i];
     array[i] = array[j];
     array[j] = temp;
-  };
+  }
   return array;
-};
+}
 
 
 /**
@@ -110,7 +133,7 @@ function initialAnimation() {
     for(let i = 0; i < 4; i++) {
       $(squaresArray[i]).addClass("red-square");
     }
-    if (game.stage !== 0) {
+    if (game.status !== "waiting") {
       $(squaresArray).removeClass("red-square");
       clearInterval(animation);
     }
@@ -118,7 +141,7 @@ function initialAnimation() {
       $(squaresArray).removeClass("red-square");
     }, 400);
   }, 800);
-};
+}
 
 
 function soundSwitch(newSound) {
@@ -127,8 +150,8 @@ function soundSwitch(newSound) {
     if (!$(fromSound).attr("src").includes("correct-answer")) {
       fromSound.pause();
       fromSound.currentTime = 0;
-      game.currentSounds.splice(i, 1);
     }
+    game.currentSounds.splice(i, 1);
   }
   game.currentSounds.push(newSound);
   soundHandler();
@@ -137,7 +160,7 @@ function soundSwitch(newSound) {
 
 function soundHandler() {
   if ($("#mute-toggle").is(":checked")) {
-    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>")
+    $("#mute-toggle-label").html("<i class='fas fa-volume-mute clickable'></i>");
     $(".clickable").attr("tabindex", "0");
     for (let i = 0; i < game.currentSounds.length; i++) {
       game.currentSounds[i].pause();
@@ -148,8 +171,8 @@ function soundHandler() {
     for (let i = 0; i < game.currentSounds.length; i++) {
       game.currentSounds[i].play();
     }
-  };
-};
+  }
+}
 
 
 /**
@@ -164,7 +187,7 @@ function startGame() {
   gridDisplayUpdate();
   stageBegin();
   $("#help-icon").show();
-};
+}
 
 
 function stageBegin() {
@@ -181,7 +204,7 @@ function stageBegin() {
   $("#go").focus().on("click", function () {
     countdown();
   });
-};
+}
 
 
 /**
@@ -204,11 +227,11 @@ function countdown() {
         if (game.status === "in-play") {
           stageInPlay();
         }
-      };
+      }
     }
   }, 1000);
   soundSwitch(sndStageCountdown);
-};
+}
 
 
 /**
@@ -223,7 +246,7 @@ function stageInPlay() {
   $("#player-start-input").remove();
   gridArea.children().removeClass("gray-square");
   stageSetup();
-};
+}
 
 
 /**
@@ -236,12 +259,12 @@ function stageSetup() {
     setRedSquares();
     if (game.stage >= 10) {
       setGreenSquares();
-    };
+    }
     stageApplyColoredSquares();
     stageTimer();
   } else {
     gameCompleted();
-  };
+  }
 
 
   /**
@@ -265,10 +288,10 @@ function stageSetup() {
     }
     for (let i = minRedSquares; i <= maxRedSquares; i++) {
       stageRedSquareOptions.push(i);
-    };
+    }
     shuffleArray(stageRedSquareOptions);
     game.redSquares = stageRedSquareOptions[0];
-  };
+  }
 
 
   /**
@@ -281,11 +304,11 @@ function stageSetup() {
     let maxGreenSquares = Math.round(stageDifficulty * 6.5);
     for (let i = minGreenSquares; i <= maxGreenSquares; i++) {
       stageGreenSquareOptions.push(i);
-    };
+    }
     shuffleArray(stageGreenSquareOptions);
     game.greenSquares = stageGreenSquareOptions[0];
-  };
-};
+  }
+}
 
 
 /**
@@ -297,12 +320,12 @@ function stageApplyColoredSquares() {
   shuffleArray(squaresArray);
   for (let i = 0; i < game.greenSquares; i++) {
     $(squaresArray[i]).addClass("green-square");
-  };  
+  }
   shuffleArray(squaresArray);
   for (let i = 0; i < game.redSquares; i++) {
     $(squaresArray[i]).addClass("red-square");
-  };
-};
+  }
+}
 
 
 /**
@@ -320,15 +343,15 @@ function stageTimer() {
         game.timer.mSec = 995;
         game.timer.sec -= 1;
         $("#timer").html(timerText(game.timer.sec, parseInt(game.timer.mSec).toString().padStart(3, "0")));
-      };
+      }
       if (game.timer.sec == 0 && parseInt(game.timer.mSec) == 0) {
         clearInterval(decrease);
-        $("#timer").html(`&nbsp;Time's Up!&nbsp;`);
+        $("#timer").html(`Time's Up!`);
         stageEnd();
-      };
+      }
     }
   }, 5);
-};
+}
 
 
 /**
@@ -358,10 +381,10 @@ function stageEnd() {
         window.alert("Please input a numeric answer.");
       } else {
         checkAnswer();
-      };
-    };
+      }
+    }
   });
-};
+}
 
 
 /**
@@ -371,17 +394,17 @@ function stageEnd() {
 function checkAnswer() {
   let playerAnswer = parseInt(document.getElementById("player-answer").value);
   if (playerAnswer === game.redSquares) {
-    playerCorrect()
+    playerCorrect();
   } else {
-    playerIncorrect()
+    playerIncorrect();
   }
-};
+}
 
 
 function playerCorrect() {
   if (game.stage < 14) {
     squaresArray.removeClass("gray-square red-square").addClass("green-square");
-    $("#player-start-input").empty().html("You got it right!")
+    $("#player-start-input").empty().html("You got it right!");
     $("#timer").hide();
     $("#continue").show();
     soundSwitch(sndRightAnswer);
@@ -390,24 +413,24 @@ function playerCorrect() {
   } else {
     window.alert("An error has occured. The game will now exit.");
     returnToInitial();
-  };
-};
+  }
+}
 
 
 function playerIncorrect() {
   soundSwitch(sndWrongAnswer);
   squaresArray.removeClass("gray-square").addClass("red-square");
-  $("#player-start-input").empty().html(`You got it wrong!<br>You reached<br>Stage ${game.stage}`)
+  $("#player-start-input").empty().html(`You got it wrong!<br>You reached<br>Stage ${game.stage}`);
   $("#timer").hide();
   $("#stage-number").hide();
   $("#restart").show();
   $("#exit").show();
-};
+}
 
 
 function nextStage() {
   game.stage++;
-  game.clock.sec === 3;  
+  game.clock.sec = 3;
   $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`); 
   $("#player-start-input").remove();
   if (game.stage <= 14) {
@@ -415,8 +438,8 @@ function nextStage() {
     stageBegin();
   } else {
     gameCompleted();
-  };
-};
+  }
+}
 
 
 /**
@@ -429,105 +452,105 @@ function gridDisplayUpdate() {
       gridArea.empty();
       for (let i = 0; i < (4 * 4); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-4x4");
       break;  
     case 2:
       gridArea.empty();
       for (let i = 0; i < (5 * 5); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-5x5");
       break;
     case 3:
       gridArea.empty();
       for (let i = 0; i < (6 * 6); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-6x6");
       break;  
     case 4:
       gridArea.empty();
       for (let i = 0; i < (7 * 7); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-7x7");
       break;
     case 5:
       gridArea.empty();
       for (let i = 0; i < (8 * 8); i++) {
         gridArea.append(singleSquareHTML);
-      };
-      gridArea.children().addClass("square-grid-8x8")
+      }
+      gridArea.children().addClass("square-grid-8x8");
       break;  
     case 6:
       gridArea.empty();
       for (let i = 0; i < (9 * 9); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-9x9");
       break;
     case 7:
       gridArea.empty();
       for (let i = 0; i < (10 * 10); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-10x10");
       break;  
     case 8:
       gridArea.empty();
       for (let i = 0; i < (11 * 11); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-11x11");
       break;
     case 9:
       gridArea.empty();
       for (let i = 0; i < (12 * 12); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-12x12");
       break;
     case 10:
       gridArea.empty();
       for (let i = 0; i < (13 * 13); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-13x13");
       break;
     case 11:
       gridArea.empty();
       for (let i = 0; i < (14 * 14); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-14x14");
       break;
     case 12:
       gridArea.empty();
       for (let i = 0; i < (16 * 16); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-16x16");
       break;
     case 13:
       gridArea.empty();
       for (let i = 0; i < (18 * 18); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-18x18");
       break;
     case 14:
       gridArea.empty();
       for (let i = 0; i < (20 * 20); i++) {
         gridArea.append(singleSquareHTML);
-      };
+      }
       gridArea.children().addClass("square-grid-20x20");
       break;
     default:
       window.alert("An error has occured. The game will now exit.");
       returnToInitial();
-  };
-};
+  }
+}
 
 
 /**
@@ -542,7 +565,7 @@ function gameCompleted() {
   $("#stage-number").hide();
   $("#replay").show();
   finalAnimation();
-};
+}
 
 
 /**
@@ -558,9 +581,9 @@ function finalAnimation() {
     if (game.progress !== "completed") {
       $(squaresArray).removeClass("green-square");
       clearInterval(animation);
-    };
+    }
   });
-};
+}
 
 
 /**
@@ -569,13 +592,13 @@ Returns the layout and values of the game timer when the correct arguments are p
 function timerText(sec, mSec) { 
   return `
     <div>
-      &nbsp;Time Remaining:&nbsp;
+      Time Remaining:
     </div>
     <div>
       ${sec}.${mSec}
     </div>
-  `
-};
+  `;
+}
 
 
 /**
@@ -592,9 +615,9 @@ function textAreaRevision() {
     $("#restart").hide();
     $("#exit").hide();
     $("#timer").show();
-    $("#timer").html(`&nbsp;Time Remaining: ${game.timer.sec}.${game.timer.mSec}&nbsp;`);
+    $("#timer").html(`Time Remaining: ${game.timer.sec}.${game.timer.mSec}`);
     $("#stage-number").show();
-    $("#stage-number").html(`&nbsp;Stage ${game.stage}&nbsp;`);
+    $("#stage-number").html(`Stage ${game.stage}`);
   } else {
     $("#start").show();
     $("#how-to").show();
@@ -603,8 +626,8 @@ function textAreaRevision() {
     $("#exit").hide();
     $("#stage-number").hide();
     $("#replay").hide();
-  };
-};
+  }
+}
 
 
 /**
@@ -613,7 +636,8 @@ function textAreaRevision() {
 function returnToInitial() {
   soundSwitch(sndThemeSong);
   game = {
-    status: "incomplete",
+    status: "waiting",
+    progress: "incomplete",
     display: "",
     stage: 0,
     timer: {
@@ -624,21 +648,21 @@ function returnToInitial() {
     clock: {
       sec: 3,
       status: "inactive"
-    }, 
+    },
     redSquares: 0,
     greenSquares: 0,
-    currentSounds: [sndThemeSong]
-  };  
+    currentSounds: []
+  };
   checkWindowHeight();
   gridArea.empty();
   for (let i = 0; i < 16; i++) {
     gridArea.append(singleSquareHTML);
-  };
+  }
   gridArea.children().addClass("square-grid-4x4");
   initialElementHiding();
   initialAnimation();
   textAreaRevision();
-};
+}
 
 // Functions end here
 
@@ -648,21 +672,21 @@ function returnToInitial() {
 $(sndStageReady).on("ended", function () {
   this.currentTime = 0;
   soundHandler();
-})
+});
 
 
 /** Enables sndThemeSong to be looped (i.e. replayed once the sound ends) */
 $(sndThemeSong).on("ended", function () {
   this.currentTime = 0;
   soundHandler();
-})
+});
 
 
 /** Enables sndPlayerAnswer to be looped (i.e. replayed once the sound ends) */
 $(sndPlayerAnswer).on("ended", function () {
   this.currentTime = 0;
   soundHandler();
-})
+});
 
 
 /**
@@ -670,11 +694,11 @@ $(sndPlayerAnswer).on("ended", function () {
  * when either the in-stage timer or pre-stage countdown is active
  */
 $("#page-title").on("mouseenter", (function () {
-  if (game.timer.status === "active" || game.clock.status === "active") {
+  if (game.timer.status === "active") {
     $(this).removeClass("clickable").addClass("unclickable");
   } else {
     $(this).removeClass("unclickable").addClass("clickable");
-  };
+  }
 }));
 
 
@@ -684,11 +708,11 @@ $("#page-title").on("mouseenter", (function () {
  * This prevents accidental loss of game progress.
  */
 $("#page-title").on("click", function () {
-  if (game.stage != 0 && game.timer.sec === 5) {
+  if (game.stage != 0 && game.timer.status !== "active") {
     if (confirm("Are you sure you want to exit the game? You will lose all your progress.") === true) {
       returnToInitial();
-    };
-  };
+    }
+  }
 });
 
 
@@ -701,7 +725,7 @@ $("#help-icon").on("mouseenter", function () {
     $(this).children("i").removeClass("clickable").addClass("unclickable");
   } else {
     $(this).children("i").removeClass("unclickable").addClass("clickable");
-  };
+  }
 });
 
 
@@ -800,7 +824,7 @@ $("#help-exit").on("click", function () {
         $(this).show();
       });
       returnToInitial();
-    };
+    }
   } else if (game.stage === 1 && game.redSquares === 0) {
     $("#instructions-container").hide();
     $(gridArea).fadeTo(400, 1, function () {
@@ -818,7 +842,7 @@ $("#help-exit").on("click", function () {
     $(textArea).fadeTo(400, 1, function () {
       $(this).show();
     });
-  };
+  }
 });
 
 
@@ -827,8 +851,8 @@ $(document).on("keyup", function (event) {
   if ($(":focus").attr("id") !== "go") {
     if (event.which === 13 || event.which === 32) {
       $(":focus").click();
-    };
-  };
+    }
+  }
 });
 
 
@@ -849,8 +873,8 @@ $("#mute-toggle").on("change", function () {
         game.currentSounds[i].currentTime = 0;
         game.currentSounds.splice(i, 1);
         break;
-    };
-  };
+    }
+  }
   soundHandler();
 });
 
