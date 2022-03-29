@@ -203,6 +203,7 @@ function startGame() {
   gridDisplayUpdate();
   stageBegin();
   $("#help-icon").show();
+  $("#page-title").addClass("clickable");
 }
 
 
@@ -736,13 +737,15 @@ $(sndPlayerAnswer).on("ended", function () {
  * Provides visual feedback to the user that the page title is not clickable
  * when either the in-stage timer or pre-stage countdown is active.
  */
-$("#page-title").on("mouseenter", (function () {
-  if (game.timer.status === "active" || game.clock.status === "active") {
-    $(this).removeClass("clickable").addClass("unclickable");
-  } else {
-    $(this).removeClass("unclickable").addClass("clickable");
+$("#page-title").on("mouseenter", function () {
+  if (game.status === "in-play") {
+    if (game.timer.status === "active" || game.clock.status === "active") {
+      $(this).removeClass("clickable").addClass("unclickable");
+    } else {
+      $(this).removeClass("unclickable").addClass("clickable");
+    }
   }
-}));
+});
 
 
 /**
@@ -752,7 +755,7 @@ $("#page-title").on("mouseenter", (function () {
  */
 $("#page-title").on("click", function () {
   if (game.stage != 0 && game.timer.status !== "active" && game.clock.status !== "active") {
-    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") === true) {
+    if (confirm("Are you sure you want to exit the game? You will lose all your progress!") === true) {
       returnToInitial();
     }
   }
@@ -858,7 +861,7 @@ $("#help-close").on("click", function () {
 /** Hides the game instructions and returns to the initial page display when the user clicks "Return to Game". */
 $("#help-exit").on("click", function () {
   if (game.stage > 1 || (game.stage === 1 && game.redSquares !== 0)) {
-    if (confirm("Are you sure you want to exit the game? You will lose all your progress.") == true) {
+    if (confirm("Are you sure you want to exit the game? You will lose all your progress!") == true) {
       $("#instructions-container").hide();
       $(gridArea).fadeTo(400, 1, function () {
         $(this).show();

@@ -6,27 +6,36 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-        content="Think you can count quickly under pressure? Try this impossible game to test yourself!">
+    content="Think you can count quickly under pressure? Try this impossible game to test yourself!">
   <title>SumSquares</title>
+  <script src="https://kit.fontawesome.com/179d3cb661.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
+  <!--Container for main heading, mute icon and help icon begins here-->
   <div id="title-help-container">
     <input id="mute-toggle" type="checkbox" checked>
     <label id="mute-toggle-label" for="mute-toggle"><i class="fas fa-volume-mute clickable"></i></label>
     <div class="title">
-      <h1 id="page-title" class="clickable centered-text-box">SumSquar<span
+      <h1 id="page-title" class="centered-text-box">SumSquar<span
           id="sigma">&#931;</span>s</h1>
     </div>
     <p id="help-icon" class="hidden"><i class="fas fa-question-circle clickable"></i></p>
   </div>
+  <!--Container for main heading, mute icon and help icon ends here-->
+  <!--Container for prompt to rotate device begins here-->
   <div id="game-rotate-container" class="hidden">
     <p>We're sorry!</p>
     <p>This game is not optimised for this screen size.</p>
     <p>Please try rotating your device to ensure a fully immersive experience.</p>
   </div>
+  <!--Container for prompt to rotate device ends here-->
+  <!--Container for page's center-most elements begine here-->
   <div id="game-area-container">
+    <!--Container for game instructions begins here-->
     <div id="instructions-container" class="hidden">
       <div id="instructions">
         <p>Welcome to the game.</p>
@@ -37,6 +46,8 @@
       <div id="help-close" class="clickable">Return to Game</div>
       <div id="help-exit" class="clickable">Exit Game</div>
     </div>
+    <!--Container for game instructions ends here-->
+    <!--Container for square grid begins here-->
     <div id="squares-container">
       <div class="square square-grid-initial"></div>
       <div class="square square-grid-initial"></div>
@@ -55,7 +66,10 @@
       <div class="square square-grid-initial"></div>
       <div class="square square-grid-initial"></div>
     </div>
-  </div>
+    <!--Container for square grid begins here-->
+  </div>  
+  <!--Container for page's center-most elements begine here-->
+  <!--Container for all text below the square grid begins here-->
   <div id="bottom-text-container">
     <div class="centered-text-box">
       <p id="start" class="menu-top clickable">Play Game</p>
@@ -67,10 +81,8 @@
       <p id="stage-number" class="menu-btm hidden"></p>
       <p id="replay" class="hidden menu-btm clickable">Play Again</p>
     </div>
-  </div>
-  <script src="https://kit.fontawesome.com/179d3cb661.js" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-    crossorigin="anonymous"></script>
+  </div>  
+  <!--Container for all text below the square grid ends here-->
   <script src="assets/scripts/script.js"></script>
 </body>
 

@@ -19,6 +19,10 @@ body {
   align-content: center;
 }
 
+h1 {
+  padding: 0 0.2em;
+}
+
 button {
   background-color: lime;
   border-radius: 20%;
@@ -30,12 +34,16 @@ button {
   outline: red solid 3px;
 }
 
-/* Method to remove arrows on number inputs taken from https://css-tricks.com/snippets/css/turn-off-number-input-spinners/ */
+/* 
+Method to remove arrows on number inputs begins here
+(taken from https://css-tricks.com/snippets/css/turn-off-number-input-spinners/
+*/
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+/* Method to remove arrows on number inputs ends here */
 
 .hidden {
   display: none;
@@ -287,7 +295,7 @@ input[type=number]::-webkit-outer-spin-button {
   width: calc(var(--max-width));
 }
 
-/*Media queries begin here */
+/* Media queries begin here */
 
 @media screen and (min-width: 426px) {
 
@@ -330,7 +338,9 @@ input[type=number]::-webkit-outer-spin-button {
 
 @media screen and (max-width: 768px) {
 
-  #how-to {
+  #how-to,
+  #exit,
+  #replay {
     padding-top: 1em;
   }
 
@@ -353,3 +363,4 @@ input[type=number]::-webkit-outer-spin-button {
 
 }
 
+/* Media queries end here */
