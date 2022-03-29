@@ -29,9 +29,9 @@
 * ### Wireframes
     * <a href="assets/docs/wireframes/game-landing.png" target="_blank">Prior to user interaction.</a>
     * <a href="assets/docs/wireframes/game-instructions.png" target="_blank">Game instructions.</a>
-    * <a href="assets/docs/wireframes/game-mid-stages-ready.png" target="_blank">Stage ready to play (mid-levelstage).</a>
+    * <a href="assets/docs/wireframes/game-mid-stages-ready.png" target="_blank">Stage ready to play (mid-level stage).</a>
     * <a href="assets/docs/wireframes/game-start.png" target="_blank">Countdown prior to game stage being in-play.</a>
-    * <a href="assets/docs/wireframes/game-early-stage-countdown.png" target="_blank">Stage in-play (early stages).</a>
+    * <a href="assets/docs/wireframes/game-early-stages-countdown.png" target="_blank">Stage in-play (early stages).</a>
     * <a href="assets/docs/wireframes/game-mid-stages-countdown.png" target="_blank">Stage in-play (mid stages).</a>
     * <a href="assets/docs/wireframes/game-later-stages-countdown.png" target="_blank">Stage in-play (later stages).</a>
     * <a href="assets/docs/wireframes/game-early-stage-input.png" target="_blank">User input at end of stage.</a>
@@ -86,9 +86,9 @@
 <p>The W3C Markup Validator and W3C CSS Validator Services were used to validate the site’s page to ensure there were no syntax errors present.</p>
 
 * <a href="https://validator.w3.org/" target="_blank">W3C Markup Validator</a>
-    * <a href=" https://validator.w3.org/nu/?doc=https%3A%2F%2Fdanwilliams91.github.io%2FSumSquares%2F" target="_blank">Results</a>
+    * <a href="https://validator.w3.org/nu/?doc=https%3A%2F%2Fdanwilliams91.github.io%2FSumSquares%2F" target="_blank">Results</a>
 * <a href="https://jigsaw.w3.org/css-validator/" target="_blank">W3C CSS Validator</a>
-    * <a href=" https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fdanwilliams91.github.io%2FSumSquares%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en" target="_blank">style.css file results.</a>
+    * <a href="https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fdanwilliams91.github.io%2FSumSquares%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en" target="_blank">style.css file results.</a>
 
 ### JavaScript Testing
 
