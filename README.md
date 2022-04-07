@@ -40,7 +40,6 @@
     * <a href="assets/docs/wireframes/game-completed.png" target="_blank">Player completed game.</a>
 
 ## Features
-
 * Game music and sound effects are present but optional. The page initially loads with <a href="assets/docs/screenshots/game-muted.png" target="_blank">sounds muted</a> and the user has the option to <a href="assets/docs/screenshots/game-unmuted.png" target="_blank">unmute</a> and mute the sounds throughout the game via the clickable sound icon.
 * The input box for the player to input their answer only allows numeric values to prevent accidental entry and the player losing their progress. When a non-numeric value is submitted, a <a href="assets/docs/screenshots/non-numeric-prompt.png" target="_blank">prompt</a> is displayed to inform the user that only numeric values are able to be submitted.
 * When the player clicks “Exit Game” when the game is in play (i.e. not on the landing page), a <a href="assets/docs/screenshots/exit-confirmation.png" target="_blank">popup</a> is displayed in the browser window, which informs the user that they will lose their progress if the game is exited. The game will only exit if the player selects "OK" from this popup.
@@ -48,15 +47,12 @@
 * If the viewport height-to-width ratio is insufficient for the proper display of the game (such as when viewing the page in a landscape orientation on smaller devices), the content of the page is hidden and an <a href="assets/docs/screenshots/rotate-prompt.png" target="_blank">overlaying message</a> is displayed to ask the user to rotate their device. This ensures that the game is displayed correctly when played.
 
 ## Technologies Used
-
 ### Languages Used
-
 * <a href="https://en.wikipedia.org/wiki/HTML5" target="_blank">HTML5.</a>
 * <a href="https://en.wikipedia.org/wiki/CSS" target="_blank">CSS3.</a>
 * <a href="https://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript.</a>
 
 ### Frameworks, Libraries & Programs Used
-
 1. <a href="https://balsamiq.com/wireframes/" target="_blank">Balsamiq:</a>
     * Balsamiq was used to create the wireframes during the design process.
 2. <a href="https://fontawesome.com/" target="_blank">Font Awesome:</a>
@@ -81,7 +77,6 @@
     * The TwistedWave online audio editor was used to edit the sound files.
 
 ## Testing
-
 ### HTML and CSS Validation
 <p>The W3C Markup Validator and W3C CSS Validator Services were used to validate the site’s page to ensure there were no syntax errors present.</p>
 
@@ -91,7 +86,6 @@
     * <a href="https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fdanwilliams91.github.io%2FSumSquares%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en" target="_blank">style.css file results.</a>
 
 ### JavaScript Testing
-
 <p>The <a href="https://jshint.com/" target="_blank">JSHint tool</a> was used to test the JavaScript code and to identify any errors present.
 
 * Automated Testing
@@ -101,7 +95,6 @@
   * Throughout the entirety of the project, manual testing was utilised to ensure that functions worked as intended and user feedback behaved as expected. This involved extensive use of in-browser testing where <a href="https://developer.chrome.com/docs/devtools/" target="_blank">Chrome DevTools</a> was used to control and monitor JavaScript variable values.
 
 ### Testing User Stories from User Experience (UX) Section
-
 * #### New User Goals
     a)  As a new user, I want to easily and quickly be able to find out how to play the game.
     * Upon first visiting the game’s webpage, the text <a href="assets/docs/screenshots/how-to-play.png" target="_blank">"How to Play"</a> is clearly visible at the bottom of the page. Clicking this will show the user the <a href="assets/docs/screenshots/instructions.png" target="_blank">instructions</a> of the game.
@@ -121,7 +114,7 @@
 ### Further Testing
 * The Website was tested on Google Chrome, Mozilla Firefox and Microsoft Edge browsers.
 * The website was viewed on a variety of devices such as Desktop, Laptop, iPhone 11 and Google Pixel 5.
-* Friends and family members were asked to review the site and documentation to point out any bugs and/or user experience issues.
+* Friends and family members were asked to review the site and documentation to identify any bugs and/or user experience issues.
 
 ### Bugs
 * The code to update the number of squares in the grid at each progressive stage initially added new squares to the already-existing squares within the grid. When using this method, it was found that the CSS styling was not being applied to the new squares correctly, and the spacing of the new squares was non-existent compared to the existing squares.  
@@ -131,7 +124,7 @@
 * During the later stages of development, and during manual testing, it was discovered that the formulae used to set the number of red squares in the grid—when the game was in-play—resulted in some stages having the same number of squares every time the game was played. This removed the randomness of the earlier stages, which is an important element of the game.
     * The formulae were tested using Microsoft Excel and were revised following trial-and-error methods; the results of which now ensures that each stage is no longer guaranteed to contain a set number of red squares, whilst also ensuring that the game difficulty increases with the progression of stages.
 * During manual testing, it was found that, on some rare occasions, the initially hidden elements were visible for a very short time whilst the page loaded. This was when the elements were hidden using JavaScript.
-    * To combat this, the elements which are not meant to be displayed on the loading of the page have been assigned a class of “hidden”, which is targeted by CSS to ensure the relevant elements are hidden without the need of the JavaScript file to be loaded. A new function has also been added to the JavaScript file to hide the elements and then remove the “hidden” class. This ensures that the elements remain hidden when there is a problem or a delay with the loading of the JavaScript file.
+    * To rectify this issue, the elements which are not meant to be displayed on the loading of the page have been assigned a class of “hidden”, which is targeted by CSS to ensure the relevant elements are hidden without the need of the JavaScript file to be loaded. A new function has also been added to the JavaScript file to hide the elements and then remove the “hidden” class. This ensures that the elements remain hidden when there is a problem or a delay with the loading of the JavaScript file.
 * When the mute icon is toggled using a device keyboard, the icon is no longer selected. The icon also automatically deselects when a soundtrack is looped once it has ended.
     * This is a minor inconvenience which doesn't affect the playability of the game in any way, so no attempt has been made to fix this bug as the developer has considered it an inefficient use of time for the scope of the project.
 
@@ -140,7 +133,7 @@
 
 * An option to share their final progress of the game to social media or to external messaging services would bring additional value to its users and the developer.
   * In terms of the site's users, they could involve their friends and compete with each other for the highest score.
-  * In terms of the site owner/developer, having its users share the game with a link would bring additional traffic to the site. This can increase the developer's reputation and bring further opportunities for advertising.
+  * In terms of the site owner/developer, having its users share the game with a link would bring additional traffic to the site. This can increase the developer's reputation and potentially bring opportunities for advertising revenue.
 * The game is very difficult to complete so difficulty options and "lifelines" could bring further value to the game's users.
   * Including difficulty levels such as "easy," "medium" and "hard," for example, would allow more users to be able to complete the game and could improve the enjoyment level for some of its users.
     * Options to adjust difficulty levels could include increasing the in-stage timer value, reducing the number of red squares and/or removing the distracting green squares during the later stages of the game.
@@ -150,11 +143,10 @@
   * Additionally, this option may be beneficial to users with certain forms of colour vision deficiencies (although this topic hasn't been researched by the developer).
 
 ## Deployment
-
 ### GitHub Pages
 <p>The project was deployed to GitHub Pages using the following steps:</p>
 
-1.  Log in to GitHub and locate the <a href=" https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
+1.  Log in to GitHub and locate the <a href="https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
 2.  At the top of the Repository (not top of page), locate the "Settings" Button on the menu.
 3.  Scroll down the Settings page until you locate the "GitHub Pages" Section.
 4.  Under "Source", click the dropdown called "None" and select "Master Branch".
@@ -164,12 +156,12 @@
 ### Forking the GitHub Repository
 <p>By forking the GitHub Repository we make a copy of the original repository on our GitHub account to view and/or make changes without affecting the original repository by using the following steps:</p>
 
-1.  Log in to GitHub and locate the <a href=" https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
+1.  Log in to GitHub and locate the <a href="https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
 2.  At the top of the Repository (not top of page) just above the "Settings" Button on the menu, locate the "Fork" Button.
 3.  You should now have a copy of the original repository in your GitHub account.
 
 ### Making a Local Clone
-1.  Log in to GitHub and locate the <a href=" https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
+1.  Log in to GitHub and locate the <a href="https://github.com/DanWilliams91/SumSquares" target="_blank">GitHub Repository.</a>
 2.  Under the repository name, click "Clone or download".
 3.  To clone the repository using HTTPS, under "Clone with HTTPS", copy the link.
 4.  Open Git Bash.
@@ -179,9 +171,8 @@
 <p><a href="https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository#cloning-a-repository-to-github-desktop" target="_blank">Click Here</a> to view more detailed explanations of the above process.</p>
 
 ## Credits
-
 ### Code
-* The JavaScript code responsible for shuffling an array (in particular, the shuffleArray(array) function) was sourced from <a href=" https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/" target="_blank">this GeeksforGeeks webpage.</a>
+* The JavaScript code responsible for shuffling an array (in particular, the shuffleArray(array) function) was sourced from <a href="https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/" target="_blank">this GeeksforGeeks webpage.</a>
 
 ### Media
 * All the website's sounds were sourced from <a href="https://pixabay.com/" target="_blank">Pixabay.</a>
